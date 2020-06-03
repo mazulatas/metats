@@ -2,5 +2,156 @@
   "extends": [
     "tslint-config-standard",
     "tslint-config-prettier"
-  ]
+  ],
+  "rules": {
+    "max-line-length": [
+      true,
+      140
+    ],
+    "semicolon": [
+      true,
+      "never"
+    ],
+    "no-trailing-whitespace": false,
+    "static-this": true,
+    "prefer-const": true,
+    "no-eval": true,
+    "no-magic-numbers": [
+      true,
+      -1,
+      0,
+      1,
+      2
+    ],
+    "prefer-readonly": true,
+    "member-access": true,
+    "array-type": false,
+    "arrow-parens": false,
+    "no-null-keyword": true,
+    "return-undefined": true,
+    "no-empty-interface": false,
+    "no-non-null-assertion": true,
+    "no-unnecessary-initializer": true,
+    "no-var-requires": false,
+    "no-debugger": true,
+    "no-duplicate-super": true,
+    "no-duplicate-switch-case": true,
+    "no-dynamic-delete": true,
+    "no-inferrable-types": false,
+    "variable-name": false,
+    "deprecation": {
+      "severity": "warning"
+    },
+    "typedef": [
+      true,
+      "call-signature",
+      "parameter",
+      "property-declaration",
+      "member-variable-declaration",
+      "object-destructuring",
+      "array-destructuring"
+    ],
+    "no-console": [
+      true,
+      "debug",
+      "log",
+      "info",
+      "time",
+      "timeEnd",
+      "trace"
+    ],
+    "import-blacklist": [
+      true,
+      "rxjs/Rx"
+    ],
+    "component-class-suffix": true,
+    "contextual-lifecycle": true,
+    "directive-class-suffix": true,
+    "directive-selector": [
+      true,
+      "attribute",
+      "camelCase"
+    ],
+    "component-selector": [
+      true,
+      "element",
+      "kebab-case"
+    ],
+    "interface-name": [
+      true,
+      "always-prefix"
+    ],
+    "member-ordering": [
+      true,
+      {
+        "order": [
+          "public-static-field",
+          "public-static-method",
+          "protected-static-field",
+          "protected-static-method",
+          "private-static-field",
+          "private-static-method",
+          "public-instance-field",
+          "protected-instance-field",
+          "private-instance-field",
+          "public-constructor",
+          "protected-constructor",
+          "private-constructor",
+          "public-instance-method",
+          "protected-instance-method",
+          "private-instance-method"
+        ]
+      }
+    ],
+    "no-consecutive-blank-lines": true,
+    "no-unused-expression": true,
+    "no-empty": false,
+    "no-redundant-jsdoc": true,
+    "no-switch-case-fall-through": true,
+    "object-literal-key-quotes": [
+      true,
+      "as-needed"
+    ],
+    "object-literal-sort-keys": false,
+    "ordered-imports": true,
+    "quotemark": [
+      true,
+      "single"
+    ],
+    "trailing-comma": false,
+    "no-conflicting-lifecycle": true,
+    "no-host-metadata-property": true,
+    "no-input-rename": true,
+    "no-inputs-metadata-property": true,
+    "no-output-native": true,
+    "no-output-on-prefix": true,
+    "no-output-rename": true,
+    "no-outputs-metadata-property": true,
+    "template-banana-in-box": true,
+    "template-no-negated-async": true,
+    "use-lifecycle-interface": true,
+    "use-pipe-transform-interface": true,
+    "rxjs-no-nested-subscribe": true,
+    "rxjs-no-ignored-replay-buffer": true,
+    "rxjs-no-ignored-observable": true,
+    "rxjs-finnish": {
+      "options": [
+        {
+          "functions": false,
+          "methods": false,
+          "parameters": false,
+          "properties": false,
+          "variables": true
+        }
+      ],
+      "severity": "error"
+    },
+    "ban": [
+      true,
+      [
+        "Function",
+        "Avoid using the `Function` type. Prefer a specific function type, like `() => void`."
+      ]
+    ]
+  }
 }
