@@ -1,4 +1,4 @@
 import { makeConstructorDecorator } from '../core/core'
-import { MomentCall, stub } from '../models'
+import { stub } from '../models'
 
-export const Bean = makeConstructorDecorator(MomentCall.decorate, stub)
+export const Bean = makeConstructorDecorator({handler: stub})

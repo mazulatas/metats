@@ -1,6 +1,6 @@
 import { makeConstructorDecorator, makeMethodDecorator } from '../src/core/core'
 import { Bean } from '../src/decorators'
-import { IMetaNoProps, MomentCall } from '../src/models'
+import { MetaFactoryNoProps } from '../src/models/meta-factory'
 
 describe('Meta', () => {
   let spy1: jasmine.Spy
@@ -20,20 +20,20 @@ describe('Meta', () => {
   })
 
   describe('decorate constructor', () => {
-    let testDecoratorAfterCallCtor1: IMetaNoProps
-    let testDecoratorAfterCallCtor2: IMetaNoProps
-    let testDecoratorBeforeCallCtor1: IMetaNoProps
-    let testDecoratorBeforeCallCtor2: IMetaNoProps
-    let testDecoratorDecorateCallCtor1: IMetaNoProps
-    let testDecoratorDecorateCallCtor2: IMetaNoProps
+    let testDecoratorAfterCallCtor1: MetaFactoryNoProps
+    let testDecoratorAfterCallCtor2: MetaFactoryNoProps
+    let testDecoratorBeforeCallCtor1: MetaFactoryNoProps
+    let testDecoratorBeforeCallCtor2: MetaFactoryNoProps
+    let testDecoratorDecorateCallCtor1: MetaFactoryNoProps
+    let testDecoratorDecorateCallCtor2: MetaFactoryNoProps
 
     beforeEach(() => {
-      testDecoratorAfterCallCtor1 = makeConstructorDecorator(MomentCall.afterCallCtor, spy1)
-      testDecoratorAfterCallCtor2 = makeConstructorDecorator(MomentCall.afterCallCtor, spy2)
-      testDecoratorBeforeCallCtor1 = makeConstructorDecorator(MomentCall.beforeCallCtor, spy3)
-      testDecoratorBeforeCallCtor2 = makeConstructorDecorator(MomentCall.beforeCallCtor, spy4)
-      testDecoratorDecorateCallCtor1 = makeConstructorDecorator(MomentCall.decorate, spy5)
-      testDecoratorDecorateCallCtor2 = makeConstructorDecorator(MomentCall.decorate, spy6)
+      testDecoratorAfterCallCtor1 = makeConstructorDecorator({handler: spy1, moment: {runtime: 'afterCreateInstance'}})
+      testDecoratorAfterCallCtor2 = makeConstructorDecorator({handler: spy2, moment: {runtime: 'afterCreateInstance'}})
+      testDecoratorBeforeCallCtor1 = makeConstructorDecorator({handler: spy3, moment: {runtime: 'beforeCreateInstance'}})
+      testDecoratorBeforeCallCtor2 = makeConstructorDecorator({handler: spy4, moment: {runtime: 'beforeCreateInstance'}})
+      testDecoratorDecorateCallCtor1 = makeConstructorDecorator({handler: spy5, moment: {runtime: 'decorate'}})
+      testDecoratorDecorateCallCtor2 = makeConstructorDecorator({handler: spy6, moment: {runtime: 'decorate'}})
     })
 
     it('should decorate', () => {
@@ -130,20 +130,20 @@ describe('Meta', () => {
   })
 
   describe('decorate methods', () => {
-    let methodDecoratorDecorateCtor1: IMetaNoProps
-    let methodDecoratorDecorateCtor2: IMetaNoProps
-    let methodDecoratorAfterCallCtor1: IMetaNoProps
-    let methodDecoratorAfterCallCtor2: IMetaNoProps
-    let methodDecoratorBeforeCallCtor1: IMetaNoProps
-    let methodDecoratorBeforeCallCtor2: IMetaNoProps
+    let methodDecoratorDecorateCtor1: MetaFactoryNoProps
+    let methodDecoratorDecorateCtor2: MetaFactoryNoProps
+    let methodDecoratorAfterCallCtor1: MetaFactoryNoProps
+    let methodDecoratorAfterCallCtor2: MetaFactoryNoProps
+    let methodDecoratorBeforeCallCtor1: MetaFactoryNoProps
+    let methodDecoratorBeforeCallCtor2: MetaFactoryNoProps
 
     beforeEach(() => {
-      methodDecoratorAfterCallCtor1 = makeMethodDecorator(MomentCall.afterCallCtor, spy1)
-      methodDecoratorAfterCallCtor2 = makeMethodDecorator(MomentCall.afterCallCtor, spy2)
-      methodDecoratorBeforeCallCtor1 = makeMethodDecorator(MomentCall.beforeCallCtor, spy3)
-      methodDecoratorBeforeCallCtor2 = makeMethodDecorator(MomentCall.beforeCallCtor, spy4)
-      methodDecoratorDecorateCtor1 = makeMethodDecorator(MomentCall.decorate, spy5)
-      methodDecoratorDecorateCtor2 = makeMethodDecorator(MomentCall.decorate, spy6)
+      methodDecoratorAfterCallCtor1 = makeMethodDecorator({handler: spy1, moment: {runtime: 'afterCreateInstance'}})
+      methodDecoratorAfterCallCtor2 = makeMethodDecorator({handler: spy2, moment: {runtime: 'afterCreateInstance'}})
+      methodDecoratorBeforeCallCtor1 = makeMethodDecorator({handler: spy3, moment: {runtime: 'beforeCreateInstance'}})
+      methodDecoratorBeforeCallCtor2 = makeMethodDecorator({handler: spy4, moment: {runtime: 'beforeCreateInstance'}})
+      methodDecoratorDecorateCtor1 = makeMethodDecorator({handler: spy5, moment: {runtime: 'decorate'}})
+      methodDecoratorDecorateCtor2 = makeMethodDecorator({handler: spy6, moment: {runtime: 'decorate'}})
     })
 
     it('should decorate method after call ctor', () => {
