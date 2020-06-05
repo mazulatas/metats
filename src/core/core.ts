@@ -2,14 +2,19 @@ import { ContextType } from '../models/context-type'
 import { ICtor } from '../models/ctor'
 import { IFakeCtor } from '../models/fake-ctor'
 import { IConstructorDecorationFunction, IMethodDecoratorFunction } from '../models/functions'
+import { HandlerCallMoment } from '../models/handler-call-moment'
 import { IBaseHandler, IConstructorHandler, IMethodHandler } from '../models/handlers'
 import { MetaFactory } from '../models/meta-factory'
 import { IParamsDecoratorMaker } from '../models/params-decorator-maker'
+import { IResolver } from '../models/resolver'
+import { IResolverContext } from '../models/resolver-context'
 import { stub } from '../models/stub'
 import { ORIGINAL_CTOR, RESOLVER } from '../models/sumbols'
 import { Resolver } from './resolver'
 
 const depthGlobal = 3
+
+const defaultHandlerCallMoment: HandlerCallMoment = 'decorate'
 
 export function makeConstructorDecorator<P>(
   params: IParamsDecoratorMaker<IConstructorHandler<P>, P>
@@ -24,7 +29,8 @@ export function makeConstructorDecorator<P>(
 ): MetaFactory<P, IConstructorDecorationFunction> {
   return propsAggregator(
     Array.isArray(params) ? params : [params],
-    ctorFactory
+    'ctor',
+    getFakeCtx
   )
 }
 
@@ -41,11 +47,15 @@ export function makeMethodDecorator<P>(
 ): MetaFactory<P, IMethodDecoratorFunction> {
   return propsAggregator(
     Array.isArray(params) ? params : [params],
-    factory.bind(undefined, 'method')
+    'method'
   )
 }
 
-function propsAggregator<P, H extends IBaseHandler<P>, R>(params: IParamsDecoratorMaker<H, P>[], factory: Function): MetaFactory<P, R> {
+function propsAggregator<P, H extends IBaseHandler<P>, R>(
+  params: IParamsDecoratorMaker<H, P>[],
+  type: ContextType,
+  postCall: Function = stub
+): MetaFactory<P, R> {
   return function(props?: P): any {
     if (props) {
       params.forEach(param => {
@@ -53,28 +63,23 @@ function propsAggregator<P, H extends IBaseHandler<P>, R>(params: IParamsDecorat
         param.propsMutator = () => originalMutator(props)
       })
     }
-    return function(target: R, ...args: any[]) {
-      params.forEach(param => {
-        const originalHandler = param.handler
-        param.handler = ((target: object, props: P) => originalHandler(target, props, ...args)) as H
-      })
-      return factory(target, params, ...args)
+    return function(target: ICtor | IFakeCtor, ...args: any[]) {
+      const resolver = getResolver(target)
+      const context: IResolverContext[] = params.map(param => ({
+        type,
+        handler: param.handler,
+        props: [param.propsMutator?.call(undefined, props), ...args],
+        resolve: false,
+        moment: param?.moment || defaultHandlerCallMoment,
+        name: param.name
+      }))
+      resolver.add(context)
+      return postCall(target, resolver)
     }
   } as MetaFactory<P, R>
 }
 
-function ctorFactory<P>(target: ICtor | IFakeCtor, params: IParamsDecoratorMaker<IConstructorHandler<P>, P>[]): IFakeCtor {
-  const resolver = getResolver(target)
-  resolver.add(params, 'ctor')
-  return getFakeCtx(target, resolver)
-}
-
-function factory<P>(type: ContextType, target: ICtor | IFakeCtor, params: IParamsDecoratorMaker<IConstructorHandler<P>, P>[]): void {
-  const resolver = getResolver(target)
-  resolver.add(params, type)
-}
-
-function getFakeCtx(target: ICtor | IFakeCtor, resolver: Resolver): IFakeCtor {
+function getFakeCtx(target: ICtor | IFakeCtor, resolver: IResolver): IFakeCtor {
   resolver.resolveDecorationTime(target)
   if (checkFakeCtor(target)) return target as IFakeCtor
   const fakeCtor = function(...args: any[]): object {
@@ -107,7 +112,7 @@ function getDeepField<R>(cls: IFakeCtor | ICtor, name: string | symbol, depth = 
   return Reflect.has(cls, name) ? Reflect.get(cls, name) : getDeepField(cls.prototype, name, depth + 1)
 }
 
-export function getResolver(ctor: ICtor | IFakeCtor): Resolver {
+export function getResolver(ctor: ICtor | IFakeCtor): IResolver {
   const originalCtor = getOriginalCtor(ctor)
   if (hasDeepField(originalCtor, RESOLVER)) return getDeepField(originalCtor, RESOLVER)
   Reflect.set(originalCtor, RESOLVER, new Resolver())

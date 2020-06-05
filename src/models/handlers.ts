@@ -1,5 +1,5 @@
 export interface IBaseHandler<P> {
-  (target: object, props: P, ...args: any[]): void
+  (target: object,...args: any[]): void
 }
 
 export interface IConstructorHandler<P> extends IBaseHandler<P> {}
