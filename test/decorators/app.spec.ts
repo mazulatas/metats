@@ -1,12 +1,22 @@
-import { makeConstructorDecorator } from '../../src/core/core'
+import { App, bootstrap } from '../../src/decorators'
 
 describe('App decorator', () => {
   it('should auto create instance', (done) => {
-
-    function handler(): void {
-
+    @App()
+    class TestApp {
+      constructor() {
+        done()
+      }
     }
+  })
 
-    class Test {}
+  it('should auto call bootstrap', (done) => {
+    @App()
+    class TestApp {
+      @bootstrap()
+      private init() {
+        done()
+      }
+    }
   })
 })

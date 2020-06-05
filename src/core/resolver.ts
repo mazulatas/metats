@@ -11,28 +11,30 @@ export class Resolver implements IResolver {
   }
 
   public resolveDecorationTime(target: ICtor) {
-    this.resolve(target, 'decorate')
+    this.resolve(target, this.getContextByCallMoment('decorate'))
   }
 
   public resolveBeforeCreateInstance(target: ICtor) {
-    this.resolve(target, 'beforeCreateInstance')
+    this.resolve(target, this.getContextByCallMoment('beforeCreateInstance'))
   }
 
   public resolveAfterCreateInstance(target: object) {
-    this.resolve(target, 'afterCreateInstance')
+    this.resolve(target, this.getContextByCallMoment('afterCreateInstance'))
   }
 
   public hasName(name: string): boolean {
-    return !!this.context.find(ctx => ctx.name === name)
+    return this.context.some(ctx => ctx.name === name)
   }
 
   public isResolve(name: string): boolean {
     return this.context.find(ctx => ctx.name === name)?.resolve || false
   }
 
-  private resolve(target: object, runtime: 'decorate' | 'beforeCreateInstance' | 'afterCreateInstance') {
-    const resolveTarget = this.context.filter(ctx => ctx.moment === runtime && !ctx.resolve)
-    // .sort(Resolver.sort)
+  private getContextByCallMoment(runtime: 'decorate' | 'beforeCreateInstance' | 'afterCreateInstance'): IResolverContext[] {
+    return this.context.filter(ctx => ctx.moment === runtime && !ctx.resolve)
+  }
+
+  private resolve(target: object, resolveTarget: IResolverContext[]) {
     resolveTarget.forEach(ctx => {
       try {
         ctx.handler(target, ...ctx.props)

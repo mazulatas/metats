@@ -2,20 +2,29 @@ import {
   makeConstructorDecorator,
   makeMethodDecorator,
 } from '../core/core'
-import { getGlobalThis } from '../core/utils'
+import { asyncHandler, getFakeCtor, getGlobalThis, getResolver } from '../core/utils'
 import { APP_ROOT } from '../models/sumbols'
 
-export const App = makeConstructorDecorator()
-export const bootstrap = makeMethodDecorator()
+export const App = makeConstructorDecorator({ handler: asyncHandler(handlerDecoratorAppInstanceCreator), moment: 'decorate' })
+export const bootstrap = makeMethodDecorator({ handler: handlerDecoratorBootstrap, moment: 'afterCreateInstance', name: 'bootstrap' })
 
-function handlerDecoratorApp(ctx: any): void {
+function handlerDecoratorAppInstanceCreator(ctor: any): void {
+  const resolver = getResolver(ctor)
+  const fCtor = getFakeCtor(ctor)
+  if (!resolver.hasName('bootstrap')) {
+    console.warn('not found bootstrap method')
+  }
+  const instance = new fCtor()
+  setAppRoot(instance)
 }
 
-function handlerDecoratorBootstrap(sss: any, ddd: any, ff: any): void {
+function handlerDecoratorBootstrap(target: any, _: any, methodName: string): void {
+  const method: Function = target[methodName]
+  method.apply(target)
 }
 
 function setAppRoot(appRoot: object): void {
-  const globalThis = getGlobalThis()
-  if (Reflect.has(globalThis, APP_ROOT)) throw new Error('app root is init')
+  const globalContext = getGlobalThis()
+  if (Reflect.has(globalContext, APP_ROOT)) throw new Error('app root is init')
   Reflect.set(globalThis, APP_ROOT, appRoot)
 }

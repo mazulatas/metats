@@ -4,5 +4,9 @@ export interface IConstructorDecorationFunction {
 }
 
 export interface IMethodDecoratorFunction {
-  (constructorFunction: Function, methodName: string, descriptor: PropertyDescriptor): void
+  (constructorFunction: any, methodName: string, descriptor?: PropertyDescriptor): void
+}
+
+export interface IFieldDecoratorFunction {
+  (constructorFunction: any, fieldName: string): void
 }

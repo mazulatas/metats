@@ -1,4 +1,4 @@
-import { makeConstructorDecorator, makeMethodDecorator } from '../src/core/core'
+import { makeConstructorDecorator, makeFieldDecorator, makeMethodDecorator } from '../src/core/core'
 import { Bean } from '../src/decorators'
 import { MetaFactoryNoProps } from '../src/models/meta-factory'
 
@@ -221,6 +221,35 @@ describe('Meta', () => {
       expect(testReturn).toEqual(returned)
     })
 
+  })
+  
+  describe('decorate field', () => {
+    let fieldDecoratorDecorateCtor1: MetaFactoryNoProps
+    let fieldDecoratorDecorateCtor2: MetaFactoryNoProps
+    let fieldDecoratorAfterCallCtor1: MetaFactoryNoProps
+    let fieldDecoratorAfterCallCtor2: MetaFactoryNoProps
+    let fieldDecoratorBeforeCallCtor1: MetaFactoryNoProps
+    let fieldDecoratorBeforeCallCtor2: MetaFactoryNoProps
+
+    beforeEach(() => {
+      fieldDecoratorAfterCallCtor1 = makeFieldDecorator({handler: spy1, moment: 'afterCreateInstance'})
+      fieldDecoratorAfterCallCtor2 = makeFieldDecorator({handler: spy2, moment: 'afterCreateInstance'})
+      fieldDecoratorBeforeCallCtor1 = makeFieldDecorator({handler: spy3, moment: 'beforeCreateInstance'})
+      fieldDecoratorBeforeCallCtor2 = makeFieldDecorator({handler: spy4, moment: 'beforeCreateInstance'})
+      fieldDecoratorDecorateCtor1 = makeFieldDecorator({handler: spy5, moment: 'decorate'})
+      fieldDecoratorDecorateCtor2 = makeFieldDecorator({handler: spy6, moment: 'decorate'})
+    })
+
+    it('should decorate field after call ctor', () => {
+      @Bean()
+      class TestClass {
+        @fieldDecoratorAfterCallCtor1()
+        private field: any
+      }
+      const testInstance = new TestClass()
+      expect(testInstance).toBeTruthy()
+      expect(spy1).toHaveBeenCalled()
+    })
   })
 
 })
