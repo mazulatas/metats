@@ -1,6 +1,6 @@
-import { makeConstructorDecorator, makeFieldDecorator, makeMethodDecorator } from '../src/core/core'
+import { makeConstructorDecorator, makeFieldDecorator, makeMethodDecorator, makeParamDecorator } from '../src/core/core'
 import { Bean } from '../src/decorators'
-import { MetaFactoryNoProps } from '../src/models/meta-factory'
+import { MetaFactoryNoProps } from '../src/models/core/meta-factory'
 
 describe('Meta', () => {
   let spy1: jasmine.Spy
@@ -247,6 +247,34 @@ describe('Meta', () => {
         private field: any
       }
       const testInstance = new TestClass()
+      expect(testInstance).toBeTruthy()
+      expect(spy1).toHaveBeenCalled()
+    })
+  })
+  
+  describe('decorate param', () => {
+    let paramDecoratorDecorateCtor1: MetaFactoryNoProps
+    let paramDecoratorDecorateCtor2: MetaFactoryNoProps
+    let paramDecoratorAfterCallCtor1: MetaFactoryNoProps
+    let paramDecoratorAfterCallCtor2: MetaFactoryNoProps
+    let paramDecoratorBeforeCallCtor1: MetaFactoryNoProps
+    let paramDecoratorBeforeCallCtor2: MetaFactoryNoProps
+
+    beforeEach(() => {
+      paramDecoratorAfterCallCtor1 = makeParamDecorator({handler: spy1, moment: 'afterCreateInstance'})
+      paramDecoratorAfterCallCtor2 = makeParamDecorator({handler: spy2, moment: 'afterCreateInstance'})
+      paramDecoratorBeforeCallCtor1 = makeParamDecorator({handler: spy3, moment: 'beforeCreateInstance'})
+      paramDecoratorBeforeCallCtor2 = makeParamDecorator({handler: spy4, moment: 'beforeCreateInstance'})
+      paramDecoratorDecorateCtor1 = makeParamDecorator({handler: spy5, moment: 'decorate'})
+      paramDecoratorDecorateCtor2 = makeParamDecorator({handler: spy6, moment: 'decorate'})
+    })
+
+    it('should decorate param after call ctor', () => {
+      @Bean()
+      class TestClass {
+        constructor(@paramDecoratorAfterCallCtor1() private field: any) {}
+      }
+      const testInstance = new TestClass(1)
       expect(testInstance).toBeTruthy()
       expect(spy1).toHaveBeenCalled()
     })

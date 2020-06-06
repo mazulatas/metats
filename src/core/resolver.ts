@@ -1,6 +1,6 @@
-import { ICtor } from '../models/ctor'
-import { IResolver } from '../models/resolver'
-import { IResolverContext } from '../models/resolver-context'
+import { ICtor } from '../models/core/ctor'
+import { IResolver } from '../models/core/resolver'
+import { IResolverContext } from '../models/core/resolver-context'
 
 export class Resolver implements IResolver {
 

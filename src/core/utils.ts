@@ -1,8 +1,8 @@
-import { ICtor } from '../models/ctor'
-import { IFakeCtor } from '../models/fake-ctor'
-import { IBaseHandler } from '../models/handlers'
-import { IResolver } from '../models/resolver'
-import { FAKE_CTOR, ORIGINAL_CTOR, RESOLVER } from '../models/sumbols'
+import { ICtor } from '../models/core/ctor'
+import { IFakeCtor } from '../models/core/fake-ctor'
+import { IBaseHandler } from '../models/core/handlers'
+import { IResolver } from '../models/core/resolver'
+import { FAKE_CTOR, ORIGINAL_CTOR, RESOLVER } from '../models/core/sumbols'
 import { Resolver } from './resolver'
 
 const depthGlobal = 3
@@ -58,4 +58,9 @@ export function asyncHandler(handler: IBaseHandler): IBaseHandler {
   return function(target: object, ...args: any[]) {
     return Promise.resolve().then(() => handler(target, ...args))
   }
+}
+
+export function callMethod(context: any, methodName: string): void {
+  const method: Function = context[methodName]
+  method.apply(context)
 }

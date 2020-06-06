@@ -2,4 +2,4 @@
   // import "core-js/fn/array.find"
   // ...
 export * from './core/core'
-export * from './models'
+export * from './decorators'

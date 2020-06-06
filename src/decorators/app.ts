@@ -2,8 +2,8 @@ import {
   makeConstructorDecorator,
   makeMethodDecorator,
 } from '../core/core'
-import { asyncHandler, getFakeCtor, getGlobalThis, getResolver } from '../core/utils'
-import { APP_ROOT } from '../models/sumbols'
+import { asyncHandler, callMethod, getFakeCtor, getGlobalThis, getResolver } from '../core/utils'
+import { APP_ROOT } from '../models/core/sumbols'
 
 export const App = makeConstructorDecorator({ handler: asyncHandler(handlerDecoratorAppInstanceCreator), moment: 'decorate' })
 export const bootstrap = makeMethodDecorator({ handler: handlerDecoratorBootstrap, moment: 'afterCreateInstance', name: 'bootstrap' })
@@ -19,8 +19,7 @@ function handlerDecoratorAppInstanceCreator(ctor: any): void {
 }
 
 function handlerDecoratorBootstrap(target: any, _: any, methodName: string): void {
-  const method: Function = target[methodName]
-  method.apply(target)
+  callMethod(target, methodName)
 }
 
 function setAppRoot(appRoot: object): void {

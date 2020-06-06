@@ -1,15 +1,20 @@
-import { ContextType } from '../models/context-type'
-import { ICtor } from '../models/ctor'
-import { IFakeCtor } from '../models/fake-ctor'
-import { IConstructorDecorationFunction, IFieldDecoratorFunction, IMethodDecoratorFunction } from '../models/functions'
-import { HandlerCallMoment } from '../models/handler-call-moment'
-import { IBaseHandler, IConstructorHandler, IMethodHandler } from '../models/handlers'
-import { MetaFactory } from '../models/meta-factory'
-import { IParamsDecoratorMaker } from '../models/params-decorator-maker'
-import { IResolver } from '../models/resolver'
-import { IResolverContext } from '../models/resolver-context'
-import { stub } from '../models/stub'
-import { FAKE_CTOR, ORIGINAL_CTOR } from '../models/sumbols'
+import { ContextType } from '../models/core/context-type'
+import { ICtor } from '../models/core/ctor'
+import { IFakeCtor } from '../models/core/fake-ctor'
+import {
+  IConstructorDecorationFunction,
+  IFieldDecoratorFunction,
+  IMethodDecoratorFunction,
+  IParamDecoratorFunction
+} from '../models/core/functions'
+import { HandlerCallMoment } from '../models/core/handler-call-moment'
+import { IBaseHandler, IConstructorHandler, IFieldHandler, IMethodHandler, IParameterHandler } from '../models/core/handlers'
+import { MetaFactory } from '../models/core/meta-factory'
+import { IParamsDecoratorMaker } from '../models/core/params-decorator-maker'
+import { IResolver } from '../models/core/resolver'
+import { IResolverContext } from '../models/core/resolver-context'
+import { stub } from '../models/core/stub'
+import { FAKE_CTOR, ORIGINAL_CTOR } from '../models/core/sumbols'
 import { checkFakeCtor, getResolver } from './utils'
 
 const defaultHandlerCallMoment: HandlerCallMoment = 'decorate'
@@ -34,11 +39,20 @@ export function makeMethodDecorator<P>(
 }
 
 export function makeFieldDecorator<P>(
-  params: IParamsDecoratorMaker<IMethodHandler<P>, P> | IParamsDecoratorMaker<IMethodHandler<P>, P>[]
+  params: IParamsDecoratorMaker<IFieldHandler<P>, P> | IParamsDecoratorMaker<IFieldHandler<P>, P>[]
 ): MetaFactory<P, IFieldDecoratorFunction> {
   return propsAggregator(
     Array.isArray(params) ? params : [params],
     'field'
+  )
+}
+
+export function makeParamDecorator<P>(
+  params: IParamsDecoratorMaker<IParameterHandler<P>, P> | IParamsDecoratorMaker<IParameterHandler<P>, P>[]
+): MetaFactory<P, IParamDecoratorFunction> {
+  return propsAggregator(
+    Array.isArray(params) ? params : [params],
+    'param'
   )
 }
 
