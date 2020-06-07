@@ -1,10 +1,12 @@
 import { makeConstructorDecorator } from '../../core/core'
 import { IType } from '../../models/core/type'
 import { IInjectableParameters } from '../../models/decorators/di/injectable-parameters'
-import { Injector } from './injector'
+import { defaultInjectorConfig, Injector } from './injector'
 
-export const Injectable = makeConstructorDecorator<IInjectableParameters>({ handler: injectableHandler, moment: 'decorate' })
+export const Injectable = makeConstructorDecorator<IInjectableParameters | void>({ handler: injectableHandler, moment: 'decorate' })
 
-function injectableHandler(ctor: IType<any>): void {
-  Injector.set(ctor)
+function injectableHandler(ctor: IType<any>, props: IInjectableParameters | void): void {
+  const provideAs = (props as IInjectableParameters)?.provideAs || ctor
+  const providedIn = (props as IInjectableParameters)?.providedIn || defaultInjectorConfig.providedIn
+  Injector.set({ provideAs, providedIn, provide: ctor })
 }

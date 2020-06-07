@@ -45,15 +45,6 @@ export function getResolver(ctor: ICtor | IFakeCtor): IResolver {
   return Reflect.get(originalCtor, RESOLVER)
 }
 
-export function callAfter(name: string, handler: IBaseHandler): IBaseHandler {
-  return function innerHandler(target: object, ...args: any[]): any {
-    const resolver = getResolver(target as ICtor)
-    if (!resolver.hasName(name)) return handler(target, ...args)
-    if (resolver.isResolve(name)) return handler(target, ...args)
-    return Promise.resolve().then(() => innerHandler(target, ...args))
-  }
-}
-
 export function asyncHandler(handler: IBaseHandler): IBaseHandler {
   return function(target: object, ...args: any[]) {
     return Promise.resolve().then(() => handler(target, ...args))

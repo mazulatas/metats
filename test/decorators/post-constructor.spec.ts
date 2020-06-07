@@ -4,6 +4,7 @@ import { PostConstructor } from '../../src/decorators/post-constructor'
 describe('PostConstructor', () => {
   it('should call post constructor', (done) => {
     let testInstance: TestClass
+
     @Bean()
     class TestClass {
       @PostConstructor()

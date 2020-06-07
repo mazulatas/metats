@@ -62,18 +62,12 @@ function propsAggregator<P, H extends IBaseHandler, R>(
   postCall: Function = stub
 ): MetaFactory<P, R> {
   return function(props?: P): any {
-    if (props) {
-      params.forEach(param => {
-        const originalMutator = param.propsMutator || stub
-        param.propsMutator = () => originalMutator(props)
-      })
-    }
     return function(target: ICtor | IFakeCtor, ...args: any[]) {
       const resolver = getResolver(target)
       const context: IResolverContext[] = params.map(param => ({
         type,
         handler: param.handler,
-        props: [param.propsMutator?.call(undefined, props), ...args],
+        props: [param.propsMutator?.call(undefined, props) || props, ...args],
         resolve: false,
         moment: param?.moment || defaultHandlerCallMoment,
         name: param.name

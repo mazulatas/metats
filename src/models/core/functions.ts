@@ -1,6 +1,6 @@
 import { IType } from './type'
 
-type constructor<T> = (...args: any[]) => T
+type constructor<T> = T
 
 export interface IConstructorDecorationFunction<T = any> {
   (constructorFunction: constructor<T>): IType<T>
