@@ -1,5 +1,5 @@
-import { InjectionToken } from '../../../src/decorators/di/injection-token'
-import { Injector } from '../../../src/decorators/di/injector'
+import { InjectionToken } from '../../src/di/injection-token'
+import { Injector } from '../../src/di/injector'
 
 describe('Injector', () => {
   it('should create instance', () => {

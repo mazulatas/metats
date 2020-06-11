@@ -1,6 +1,6 @@
-import { stub } from '../../models/core/stub'
-import { IInjectionToken } from '../../models/decorators/di/injection-token'
-import { Factory } from '../../models/decorators/di/token'
+import { stub } from '../models/core/stub'
+import { IInjectionToken } from '../models/di/injection-token'
+import { Factory } from '../models/di/token'
 
 export class InjectionToken<T> implements IInjectionToken<T> {
 
@@ -21,5 +21,5 @@ export class InjectionToken<T> implements IInjectionToken<T> {
   public toString() {
     return this.name
   }
-  
+
 }

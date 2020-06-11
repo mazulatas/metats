@@ -24,6 +24,11 @@ function handlerDecoratorBootstrap(target: any, _: any, methodName: string): voi
 
 function setAppRoot(appRoot: object): void {
   const globalContext = getGlobalThis()
-  if (Reflect.has(globalContext, APP_ROOT)) throw new Error('app root is init')
-  Reflect.set(globalThis, APP_ROOT, appRoot)
+  if (Reflect.get(globalContext, APP_ROOT)) throw new Error('app root is init')
+  Reflect.set(globalContext, APP_ROOT, appRoot)
+}
+
+export function cleanAppRoot() {
+  const globalContext = getGlobalThis()
+  Reflect.set(globalContext, APP_ROOT, undefined)
 }

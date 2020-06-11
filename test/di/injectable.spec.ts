@@ -1,6 +1,5 @@
-import { Injectable } from '../../../src/decorators'
-import { InjectionToken } from '../../../src/decorators/di/injection-token'
-import { Injector } from '../../../src/decorators/di/injector'
+import { Injectable, Injector } from '../../src/di'
+import { InjectionToken } from '../../src/di/injection-token'
 
 describe('Injectable', () => {
 
