@@ -1,6 +1,6 @@
 import { checkFakeCtor, getOriginalCtor } from '../../core/utils'
 import { IInjectorConfig } from '../../models/decorators/di/injector-config'
-import { ProvidedIn } from '../../models/decorators/di/provided-in'
+import { ProvidedStrategy } from '../../models/decorators/di/provided-strategy'
 import { Token } from '../../models/decorators/di/token'
 import { InjectionToken } from './injection-token'
 
@@ -11,16 +11,12 @@ export const defaultInjectorConfig: IInjectorConfig<InjectionToken<null>> = {
 
 export class Injector {
 
-  public static get<T>(token: Token<T>): T {
-    return Injector.instance.get(token)
+  public static get<T>(token: Token<T>, injectOf?: ProvidedStrategy): T {
+    return Injector.instance.get(token, injectOf)
   }
 
   public static set<T>(providers: IInjectorConfig<T> | IInjectorConfig<T>[]): void {
     return Injector.instance.set(providers)
-  }
-
-  public static clean() {
-    Injector.instance.clean()
   }
 
   private static innerInstance: Injector
@@ -38,10 +34,6 @@ export class Injector {
 
   private constructor() {}
 
-  private clean() {
-    this.injectStorage = new WeakMap()
-  }
-
   private set<T>(providers: IInjectorConfig<T> | IInjectorConfig<T>[]): void {
     const innerProviders = Array.isArray(providers) ? providers : [providers]
     for (const provider of innerProviders) {
@@ -54,12 +46,12 @@ export class Injector {
     }
   }
 
-  private get<T>(token: Token<T>, provideFrom?: ProvidedIn): T {
+  private get<T>(token: Token<T>, injectOf?: ProvidedStrategy): T {
     let innerToken = token
     if (checkFakeCtor(token as any)) innerToken = getOriginalCtor(token as any)
     if (!this.injectStorage.has(innerToken)) throw new Error(`token ${Injector.getName(innerToken)} not found`)
     const cell: ProvideWrapper<T> = this.injectStorage.get(innerToken) as ProvideWrapper<T>
-    return cell.getInstance(provideFrom)
+    return cell.getInstance(injectOf)
   }
 
 }
@@ -68,8 +60,8 @@ export class ProvideWrapper<T> {
   private instance?: T
   constructor(private providers: IInjectorConfig<T>) {}
 
-  public getInstance(provideFrom?: ProvidedIn): T {
-    if (this.providers.providedIn === 'any' || provideFrom === 'any') return this.createNewInstance()
+  public getInstance(injectOf?: ProvidedStrategy): T {
+    if (this.providers.providedIn === 'any' || injectOf === 'any') return this.createNewInstance()
     if (!this.instance) this.instance = this.createNewInstance()
     return this.instance
   }

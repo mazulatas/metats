@@ -1,5 +1,4 @@
-import { Bean } from '../../src/decorators'
-import { PostConstructor } from '../../src/decorators/post-constructor'
+import { Bean, PostConstructor } from '../../src'
 
 describe('PostConstructor', () => {
   it('should call post constructor', (done) => {

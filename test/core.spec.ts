@@ -1,5 +1,4 @@
-import { makeConstructorDecorator, makeFieldDecorator, makeMethodDecorator, makeParamDecorator } from '../src/core/core'
-import { Bean } from '../src/decorators'
+import { Bean, makeConstructorDecorator, makeFieldDecorator, makeMethodDecorator, makeParamDecorator } from '../src'
 import { MetaFactoryNoProps } from '../src/models/core/meta-factory'
 
 describe('Meta', () => {

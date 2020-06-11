@@ -1,8 +1,8 @@
-import { ProvidedIn } from './provided-in'
+import { ProvidedStrategy } from './provided-strategy'
 import { Token } from './token'
 
 export interface IInjectorConfig<T> {
   provide: Token<T>,
   provideAs?: Token<T>
-  providedIn?: ProvidedIn
+  providedIn?: ProvidedStrategy
 }

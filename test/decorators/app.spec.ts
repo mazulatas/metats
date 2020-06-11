@@ -1,4 +1,4 @@
-import { App, bootstrap } from '../../src/decorators'
+import { App, bootstrap } from '../../src'
 
 describe('App decorator', () => {
   it('should auto create instance', (done) => {
