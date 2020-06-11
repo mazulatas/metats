@@ -1,4 +1,5 @@
 import { checkFakeCtor, getOriginalCtor } from '../core/utils'
+import { IInjector } from '../models/di/injector'
 import { IInjectorConfig } from '../models/di/injector-config'
 import { ProvidedStrategy } from '../models/di/provided-strategy'
 import { Token } from '../models/di/token'
@@ -9,32 +10,38 @@ export const defaultInjectorConfig: IInjectorConfig<InjectionToken<null>> = {
   providedIn: 'any'
 }
 
-export class Injector {
+export class Injector implements IInjector {
 
   public static get<T>(token: Token<T>, injectOf?: ProvidedStrategy): T {
-    return Injector.instance.get(token, injectOf)
+    return Injector.rootInjector.get(token, injectOf)
   }
 
   public static set<T>(providers: IInjectorConfig<T> | IInjectorConfig<T>[]): void {
-    return Injector.instance.set(providers)
+    return Injector.rootInjector.set(providers)
   }
 
-  private static innerInstance: Injector
+  public static create<T>(parent: IInjector = Injector.rootInjector, providers?: IInjectorConfig<T> | IInjectorConfig<T>[]): IInjector {
+    const newInjector = new Injector(parent)
+    if (providers) newInjector.set(providers)
+    return newInjector
+  }
 
-  private static get instance(): Injector {
+  private static innerInstance: IInjector
+
+  private static get rootInjector(): IInjector {
     if (!Injector.innerInstance) Injector.innerInstance = new Injector()
     return Injector.innerInstance
   }
 
-  private static getName(token: Token<any>) {
+  private static getName(token?: Token<any>) {
     return (token as any).name?.toString() || token.toString()
   }
 
   private injectStorage: WeakMap<Token<any>, ProvideWrapper<any>> = new WeakMap()
 
-  private constructor() {}
+  private constructor(private parent?: IInjector) {}
 
-  private set<T>(providers: IInjectorConfig<T> | IInjectorConfig<T>[]): void {
+  public set<T>(providers: IInjectorConfig<T> | IInjectorConfig<T>[]): void {
     const innerProviders = Array.isArray(providers) ? providers : [providers]
     for (const provider of innerProviders) {
       const fullProvider = {...defaultInjectorConfig, ...provider}
@@ -46,10 +53,11 @@ export class Injector {
     }
   }
 
-  private get<T>(token: Token<T>, injectOf?: ProvidedStrategy): T {
+  public get<T>(token: Token<T>, injectOf?: ProvidedStrategy): T {
     let innerToken = token
     if (checkFakeCtor(token as any)) innerToken = getOriginalCtor(token as any)
-    if (!this.injectStorage.has(innerToken)) throw new Error(`token ${Injector.getName(innerToken)} not found`)
+    if (!this.injectStorage.has(innerToken) && !this.parent) throw new Error(`token ${Injector.getName(innerToken)} not found`)
+    if (!this.injectStorage.has(innerToken) && this.parent) return this.parent.get(token, injectOf)
     const cell: ProvideWrapper<T> = this.injectStorage.get(innerToken) as ProvideWrapper<T>
     return cell.getInstance(injectOf)
   }
