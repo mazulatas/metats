@@ -1,4 +1,6 @@
 import { checkFakeCtor, getOriginalCtor } from '../core/utils'
+import { INJECTOR } from '../models/core/sumbols'
+import { IType } from '../models/core/type'
 import { IInjector } from '../models/di/injector'
 import { IInjectorConfig } from '../models/di/injector-config'
 import { ProvidedStrategy } from '../models/di/provided-strategy'
@@ -26,6 +28,15 @@ export class Injector implements IInjector {
     return newInjector
   }
 
+  public static getInjector(ctor: IType<any>): IInjector {
+    const originalCtor = getOriginalCtor(ctor)
+    return Reflect.get(originalCtor, INJECTOR) || Injector.rootInjector
+  }
+
+  public static setInjector(ctor: IType<any>, injector: IInjector): void {
+    Reflect.set(ctor, INJECTOR, injector)
+  }
+
   private static innerInstance: IInjector
 
   private static get rootInjector(): IInjector {
@@ -34,7 +45,7 @@ export class Injector implements IInjector {
   }
 
   private static getName(token?: Token<any>) {
-    return (token as any).name?.toString() || token.toString()
+    return (token as any).name?.toString() || token?.toString()
   }
 
   private injectStorage: WeakMap<Token<any>, ProvideWrapper<any>> = new WeakMap()
@@ -45,9 +56,11 @@ export class Injector implements IInjector {
     const innerProviders = Array.isArray(providers) ? providers : [providers]
     for (const provider of innerProviders) {
       const fullProvider = {...defaultInjectorConfig, ...provider}
-      const { provide } = fullProvider
+      const { provide, parentInjector, providedIn } = fullProvider
+      if (providedIn === 'root' && this.parent) return Injector.set(provider)
+      const innerParentInjector = parentInjector || this.parent || Injector.rootInjector
       if (this.injectStorage.has(provide)) throw new Error(`provider ${Injector.getName(provide)} is created`)
-      const wrapper = new ProvideWrapper(fullProvider)
+      const wrapper = new ProvideWrapper(fullProvider, innerParentInjector)
       const provideAs = fullProvider?.provideAs || fullProvider.provide
       this.injectStorage.set(provideAs, wrapper)
     }
@@ -66,7 +79,7 @@ export class Injector implements IInjector {
 
 export class ProvideWrapper<T> {
   private instance?: T
-  constructor(private providers: IInjectorConfig<T>) {}
+  constructor(private providers: IInjectorConfig<T>, private parentInjector: IInjector) {}
 
   public getInstance(injectOf?: ProvidedStrategy): T {
     if (this.providers.providedIn === 'any' || injectOf === 'any') return this.createNewInstance()
@@ -80,7 +93,10 @@ export class ProvideWrapper<T> {
     if (provide instanceof InjectionToken) factory = provide.provider
     else factory = provide as any
     const instance = new factory()
-    if (instance) return instance
+    if (instance) {
+      Injector.setInjector(factory, this.parentInjector)
+      return instance
+    }
     return factory()
   }
 }

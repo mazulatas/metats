@@ -1,5 +1,4 @@
-import { InjectionToken } from '../../src/di/injection-token'
-import { Injector } from '../../src/di/injector'
+import { InjectionToken, Injector } from '../../src/di'
 
 describe('Injector', () => {
   it('should create instance', () => {
@@ -55,6 +54,33 @@ describe('Injector', () => {
     Injector.set({ provide: TestClass, provideAs: token })
 
     const instance = Injector.get(token)
+    expect(instance).toBeInstanceOf(TestClass)
+  })
+
+  it('should create instance injector and inject', () => {
+    const newInjector = Injector.create()
+    class TestClass {
+    }
+    newInjector.set({ provide: TestClass })
+    const instance = newInjector.get(TestClass)
+    expect(instance).toBeInstanceOf(TestClass)
+  })
+
+  it('should create instance injector and inject from root injector', () => {
+    const newInjector = Injector.create()
+    class TestClass {
+    }
+    Injector.set({ provide: TestClass })
+    const instance = newInjector.get(TestClass)
+    expect(instance).toBeInstanceOf(TestClass)
+  })
+
+  it('should create instance injector and add instance class to root ', () => {
+    const newInjector = Injector.create()
+    class TestClass {
+    }
+    newInjector.set({ provide: TestClass, providedIn: 'root' })
+    const instance = Injector.get(TestClass)
     expect(instance).toBeInstanceOf(TestClass)
   })
 })
