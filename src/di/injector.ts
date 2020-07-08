@@ -34,7 +34,8 @@ export class Injector implements IInjector {
   }
 
   public static setInjector(ctor: IType<any>, injector: IInjector): void {
-    Reflect.set(ctor, INJECTOR, injector)
+    const originalCtor = getOriginalCtor(ctor)
+    Reflect.set(originalCtor, INJECTOR, injector)
   }
 
   private static innerInstance: IInjector
