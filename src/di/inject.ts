@@ -10,10 +10,13 @@ function injectHandler(ctor: any, props: Token<any> | IInjectParameters, fieldNa
   const originalCtor = getOriginalCtor(ctor)
   const descriptor = Reflect.getOwnPropertyDescriptor(originalCtor, fieldName) ||
     { enumerable: false, configurable: false }
+  const token = (props as IInjectParameters).token || props
+  const cleanToken = getOriginalCtor(token as any)
+  const injectOf = (props as IInjectParameters).injectOf
+  let instance: any
   function customGetter() {
-    const token = (props as IInjectParameters).token || props
-    const injectOf = (props as IInjectParameters).injectOf
-    return Injector.get(token, injectOf)
+    if (!instance) instance = Injector.get(cleanToken, injectOf)
+    return instance
   }
   delete descriptor.writable
   delete descriptor.value

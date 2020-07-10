@@ -1,4 +1,4 @@
-import { checkFakeCtor, getOriginalCtor } from '../core/utils'
+import { checkFakeCtor, getFakeCtor, getOriginalCtor } from '../core/utils'
 import { IInjector } from '../models/di/injector'
 import { IInjectorConfig } from '../models/di/injector-config'
 import { ProvidedStrategy } from '../models/di/provided-strategy'
@@ -34,7 +34,7 @@ export class Injector implements IInjector {
   }
 
   private static getName(token?: Token<any>) {
-    return (token as any).name?.toString() || token.toString()
+    return (token as any).name?.toString() || token?.toString()
   }
 
   private injectStorage: WeakMap<Token<any>, ProvideWrapper<any>> = new WeakMap()
@@ -76,11 +76,15 @@ export class ProvideWrapper<T> {
 
   private createNewInstance(): T {
     const { provide } = this.providers
-    let factory
+    let factory: any
     if (provide instanceof InjectionToken) factory = provide.provider
-    else factory = provide as any
-    const instance = new factory()
-    if (instance) return instance
-    return factory()
+    if (provide instanceof Function) {
+      factory = getFakeCtor(provide as any)
+      if (!factory) factory = provide
+      const instance = new factory()
+      if (instance) return instance
+      return (factory as any).apply(undefined)
+    }
+    throw new Error(`instance creator not found`)
   }
 }
