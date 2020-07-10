@@ -1,6 +1,5 @@
 import { makeFieldDecorator } from '..'
 import { getOriginalCtor } from '../core/utils'
-import { IType } from '../models/core/type'
 import { IInjectParameters } from '../models/di/inject-parameters'
 import { Token } from '../models/di/token'
 import { Injector } from './injector'
@@ -14,8 +13,7 @@ function injectHandler(ctor: any, props: Token<any> | IInjectParameters, fieldNa
   function customGetter() {
     const token = (props as IInjectParameters).token || props
     const injectOf = (props as IInjectParameters).injectOf
-    const injector = Injector.getInjector(token as IType<any>)
-    return injector.get(token, injectOf)
+    return Injector.get(token, injectOf)
   }
   delete descriptor.writable
   delete descriptor.value

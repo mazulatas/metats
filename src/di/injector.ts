@@ -28,16 +28,6 @@ export class Injector implements IInjector {
     return newInjector
   }
 
-  public static getInjector(ctor: IType<any>): IInjector {
-    const originalCtor = getOriginalCtor(ctor)
-    return Reflect.get(originalCtor, INJECTOR) || Injector.rootInjector
-  }
-
-  public static setInjector(ctor: IType<any>, injector: IInjector): void {
-    const originalCtor = getOriginalCtor(ctor)
-    Reflect.set(originalCtor, INJECTOR, injector)
-  }
-
   private static innerInstance: IInjector
 
   private static get rootInjector(): IInjector {
@@ -57,11 +47,9 @@ export class Injector implements IInjector {
     const innerProviders = Array.isArray(providers) ? providers : [providers]
     for (const provider of innerProviders) {
       const fullProvider = {...defaultInjectorConfig, ...provider}
-      const { provide, parentInjector, providedIn } = fullProvider
-      if (providedIn === 'root' && this.parent) return Injector.set(provider)
-      const innerParentInjector = parentInjector || this.parent || Injector.rootInjector
+      const { provide } = fullProvider
       if (this.injectStorage.has(provide)) throw new Error(`provider ${Injector.getName(provide)} is created`)
-      const wrapper = new ProvideWrapper(fullProvider, innerParentInjector)
+      const wrapper = new ProvideWrapper(fullProvider)
       const provideAs = fullProvider?.provideAs || fullProvider.provide
       this.injectStorage.set(provideAs, wrapper)
     }
@@ -80,7 +68,7 @@ export class Injector implements IInjector {
 
 export class ProvideWrapper<T> {
   private instance?: T
-  constructor(private providers: IInjectorConfig<T>, private parentInjector: IInjector) {}
+  constructor(private providers: IInjectorConfig<T>) {}
 
   public getInstance(injectOf?: ProvidedStrategy): T {
     if (this.providers.providedIn === 'any' || injectOf === 'any') return this.createNewInstance()
@@ -94,10 +82,7 @@ export class ProvideWrapper<T> {
     if (provide instanceof InjectionToken) factory = provide.provider
     else factory = provide as any
     const instance = new factory()
-    if (instance) {
-      Injector.setInjector(factory, this.parentInjector)
-      return instance
-    }
+    if (instance) return instance
     return factory()
   }
 }
