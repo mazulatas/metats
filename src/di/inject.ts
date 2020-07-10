@@ -4,7 +4,7 @@ import { IInjectParameters } from '../models/di/inject-parameters'
 import { Token } from '../models/di/token'
 import { Injector } from './injector'
 
-export const Inject = makeFieldDecorator<Token<any> | IInjectParameters>({ handler: injectHandler, moment: 'afterCreateInstance' })
+export const Inject = makeFieldDecorator<(Token<any> | IInjectParameters)>({ handler: injectHandler, moment: 'afterCreateInstance' })
 
 function injectHandler(ctor: any, props: Token<any> | IInjectParameters, fieldName: string) {
   const originalCtor = getOriginalCtor(ctor)

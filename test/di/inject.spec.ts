@@ -1,6 +1,5 @@
 import { Bean } from '../../src/decorators'
-import { Inject } from '../../src/di/inject'
-import { Injector } from '../../src/di/injector'
+import { Inject, Injector } from '../../src/di'
 
 describe('Inject', () => {
   it('should inject instance in class', () => {
