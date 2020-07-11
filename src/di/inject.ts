@@ -7,15 +7,19 @@ import { Injector } from './injector'
 export const Inject = makeFieldDecorator<(Token<any> | IInjectParameters)>({ handler: injectHandler, moment: 'afterCreateInstance' })
 
 function injectHandler(ctor: any, props: Token<any> | IInjectParameters, fieldName: string) {
+  const innerProps = getParams(props)
   const originalCtor = getOriginalCtor(ctor)
   const descriptor = Reflect.getOwnPropertyDescriptor(originalCtor, fieldName) ||
     { enumerable: false, configurable: false }
-  const token = (props as IInjectParameters).token || props
-  const cleanToken = getOriginalCtor(token as any)
-  const injectOf = (props as IInjectParameters).injectOf
+  const cleanToken = getOriginalCtor(innerProps.token as any)
   let instance: any
   function customGetter() {
-    if (!instance) instance = Injector.get(cleanToken, injectOf)
+    try {
+      if (!instance) instance = Injector.get(cleanToken, innerProps.injectOf)
+    } catch (e) {
+      if (!e.injectError) throw e
+      if (!innerProps.optional) throw e
+    }
     return instance
   }
   delete descriptor.writable
@@ -24,4 +28,10 @@ function injectHandler(ctor: any, props: Token<any> | IInjectParameters, fieldNa
     ...descriptor,
     get: customGetter
   })
+}
+
+function getParams(props: Token<any> | IInjectParameters): IInjectParameters {
+  return Reflect.has(props, 'token') ? props as IInjectParameters : {
+    token: props,
+  }
 }

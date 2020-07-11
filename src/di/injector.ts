@@ -3,6 +3,7 @@ import { IInjector } from '../models/di/injector'
 import { IInjectorConfig } from '../models/di/injector-config'
 import { ProvidedStrategy } from '../models/di/provided-strategy'
 import { Token } from '../models/di/token'
+import { InjectError } from './inject-error'
 import { InjectionToken } from './injection-token'
 
 export const defaultInjectorConfig: IInjectorConfig<InjectionToken<null>> = {
@@ -56,7 +57,7 @@ export class Injector implements IInjector {
   public get<T>(token: Token<T>, injectOf?: ProvidedStrategy): T {
     let innerToken = token
     if (checkFakeCtor(token as any)) innerToken = getOriginalCtor(token as any)
-    if (!this.injectStorage.has(innerToken) && !this.parent) throw new Error(`token ${Injector.getName(innerToken)} not found`)
+    if (!this.injectStorage.has(innerToken) && !this.parent) throw new InjectError(`token ${Injector.getName(innerToken)} not found`)
     if (!this.injectStorage.has(innerToken) && this.parent) return this.parent.get(token, injectOf)
     const cell: ProvideWrapper<T> = this.injectStorage.get(innerToken) as ProvideWrapper<T>
     return cell.getInstance(injectOf)
@@ -79,7 +80,9 @@ export class ProvideWrapper<T> {
     let factory: any
     if (provide instanceof InjectionToken) factory = provide.provider
     if (provide instanceof Function) {
-      factory = getFakeCtor(provide as any)
+      try {
+        factory = getFakeCtor(provide as any)
+      } catch {}
       if (!factory) factory = provide
       const instance = new factory()
       if (instance) return instance
