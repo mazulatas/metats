@@ -7,12 +7,14 @@ import {
   IMetaHandlerAfterCtorCall,
   IMetaHandlerBeforeCtorCall,
   IMetaHandlerDecorate,
+  IType,
   MetaHandlerCall,
   MetaProps,
   MomentCall,
   MomentCallType,
   ORIGINAL_CTOR,
-  PropsMutator, stub
+  PropsMutator,
+  stub
 } from '../models'
 
 export function makeConstructorDecorator<P>(
@@ -68,13 +70,36 @@ export function makeMethodDecorator<P>(
   return decoratorFactory.bind(this, momentCall, handler, propsMutator, paramsDeepFactory.bind(this, 'methods'))
 }
 
-// export function factoryParamDecorator(name: symbol) {
-//
-// }
-//
-// export function factoryMethodDecorator(name: symbol) {
-//
-// }
+export function makeParamDecorator<P>(
+  momentCall: MomentCall.decorate,
+  handler: IMetaHandlerDecorate<P>,
+  propsMutator?: PropsMutator<P>
+): MetaProps<P>
+
+export function makeParamDecorator<P>(
+  momentCall: MomentCall.afterCallCtor,
+  handler: IMetaHandlerAfterCtorCall<P>,
+  propsMutator?: PropsMutator<P>
+): MetaProps<P>
+
+export function makeParamDecorator<P>(
+  momentCall: MomentCall.beforeCallCtor,
+  handler: IMetaHandlerBeforeCtorCall<P>,
+  propsMutator?: PropsMutator<P>
+): MetaProps<P>
+
+export function makeParamDecorator<P>(
+  momentCall: MomentCallType,
+  handler: MetaHandlerCall<P>,
+  propsMutator: PropsMutator<P> = stub
+): MetaProps<P> {
+  // @ts-ignore
+  return decoratorFactory.bind(this, momentCall, handler, propsMutator, paramsDeepFactory.bind(this, 'param'))
+}
+
+export function constructor<T>(type: IType<T>): IType<T> {
+  return getOriginalCtor(type as any) as any
+}
 
 function decoratorFactory<P>(
   momentCall: MomentCall,
@@ -110,7 +135,7 @@ function paramsDeepFactory<P>(
   const cls = proto.constructor as IFakeCtor
   const ctxCtor = getOriginalCtor(cls)
   const context = getContext(ctxCtor)
-  setMethodContextToCtorContext(context, fieldName, containerName, momentCall, handler, props)
+  setMethodOfParamContextToCtorContext(context, fieldName, containerName, momentCall, handler, props)
 }
 
 function checkFakeCtor(cls: IFakeCtor | ICtor): boolean {
@@ -134,12 +159,12 @@ function getFakeCtx(cls: ICtor): Function {
   if (checkFakeCtor(cls)) return cls
   const fakeCtor = function (...args: any[]): object {
     const context = getContext(cls)
-    resolveCtorAfter(cls, context)
-    resolveMethodsAfter(cls, context)
+    resolveCtorBefore(cls, context)
+    resolveMethodsBefore(cls, context)
     resolveParamsBefore(cls, context)
     const instance = new cls(...args)
-    resolveCtorBefore(instance, context)
-    resolveMethodsBefore(instance, context)
+    resolveCtorAfter(instance, context)
+    resolveMethodsAfter(instance, context)
     resolveParamsAfter(instance, context)
     return instance
   } as IFakeCtor
@@ -157,7 +182,7 @@ function setToContext<P>(
   context.push({ resolved: false, momentCall, handler, props })
 }
 
-function setMethodContextToCtorContext<P>(
+function setMethodOfParamContextToCtorContext<P>(
   context: IMetaContainer,
   fieldName: string,
   containerName: keyof IMetaContainer,
@@ -170,40 +195,40 @@ function setMethodContextToCtorContext<P>(
   setToContext(ctx, momentCall, handler, props)
 }
 
-function resolveCtorDecorate(instance: object, context: IMetaContainer): void {
-  return resolveCtor(instance, context, MomentCall.decorate)
+function resolveCtorDecorate(cls: Function, context: IMetaContainer): void {
+  return resolveCtor(cls, context, MomentCall.decorate)
 }
 
-function resolveCtorBefore(instance: object, context: IMetaContainer): void {
-  return resolveCtor(instance, context, MomentCall.beforeCallCtor)
+function resolveCtorBefore(cls: Function, context: IMetaContainer): void {
+  return resolveCtor(cls, context, MomentCall.beforeCallCtor)
 }
 
-function resolveMethodsDecorate(instance: object, context: IMetaContainer): void {
-  return resolveParam(instance, context, 'methods', MomentCall.decorate)
+function resolveCtorAfter(instance: object, context: IMetaContainer): void {
+  return resolveCtor(instance, context, MomentCall.afterCallCtor)
 }
 
-function resolveMethodsBefore(instance: object, context: IMetaContainer): void {
-  return resolveParam(instance, context, 'methods', MomentCall.beforeCallCtor)
+function resolveMethodsDecorate(cls: Function, context: IMetaContainer): void {
+  return resolveParam(cls, context, 'methods', MomentCall.decorate)
 }
 
-function resolveParamsDecorate(instance: object, context: IMetaContainer): void {
-  return resolveParam(instance, context, 'param', MomentCall.decorate)
-}
-
-function resolveParamsBefore(instance: object, context: IMetaContainer): void {
-  return resolveParam(instance, context, 'param', MomentCall.beforeCallCtor)
-}
-
-function resolveCtorAfter(cls: Function, context: IMetaContainer): void {
-  return resolveCtor(cls, context, MomentCall.afterCallCtor)
+function resolveMethodsBefore(cls: Function, context: IMetaContainer): void {
+  return resolveParam(cls, context, 'methods', MomentCall.beforeCallCtor)
 }
 
 function resolveMethodsAfter(instance: object, context: IMetaContainer): void {
   return resolveParam(instance, context, 'methods', MomentCall.afterCallCtor)
 }
 
+function resolveParamsDecorate(cls: Function, context: IMetaContainer): void {
+  return resolveParam(cls, context, 'param', MomentCall.decorate)
+}
+
+function resolveParamsBefore(cls: Function, context: IMetaContainer): void {
+  return resolveParam(cls, context, 'param', MomentCall.beforeCallCtor)
+}
+
 function resolveParamsAfter(instance: object, context: IMetaContainer): void {
-  return resolveParam(instance, context, 'methods', MomentCall.afterCallCtor)
+  return resolveParam(instance, context, 'param', MomentCall.afterCallCtor)
 }
 
 function resolveCtor(params: object, context: IMetaContainer, momentCall: MomentCall): void {
@@ -213,15 +238,15 @@ function resolveCtor(params: object, context: IMetaContainer, momentCall: Moment
 function resolveParam(params: object, context: IMetaContainer, containerName: keyof IMetaContainer, momentCall: MomentCall): void {
   Object.keys(context[containerName]).forEach((key) => {
     const items: IMetaContext[] = Reflect.get(context[containerName], key)
-    items.forEach(item => callHandler(params, item, momentCall))
+    items.forEach(item => callHandler(params, item, momentCall, key))
   })
 }
 
-function callHandler(params: object, item: IMetaContext, momentCall: MomentCall): void {
+function callHandler(params: object, item: IMetaContext, momentCall: MomentCall, fieldName?: string): void {
   if (item.momentCall !== momentCall) return
   if (item.resolved) return
   try {
-    item.handler(params, item.props)
+    item.handler(params, item.props, fieldName)
     item.resolved = true
   } catch (e) {
     console.error(new Error('error in decorator handler, error:\n'), e)

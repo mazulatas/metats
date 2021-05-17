@@ -1,17 +1,18 @@
-
-export interface IMetaHandlerBeforeCtorCall<P> {
-  <C>(ctor: C, props: P, fieldName: string): void
-}
+import { IType } from './type'
 
 export interface IMetaHandlerAfterCtorCall<P> {
-  <C>(ctx: C, props: P, fieldName: string): void
+  <C>(ctx: C, props: P, fieldName?: string): void
+}
+
+export interface IMetaHandlerBeforeCtorCall<P> {
+  <C>(ctor: IType<C>, props: P, fieldName?: string): void
 }
 
 export interface IMetaHandlerDecorate<P> {
-  <C>(ctx: C, props: P, fieldName: string): void
+  <C>(ctx: IType<C>, props: P, fieldName?: string): void
 }
 
 export type MetaHandlerCall<P> =
-  IMetaHandlerBeforeCtorCall<P>
   | IMetaHandlerAfterCtorCall<P>
+  | IMetaHandlerBeforeCtorCall<P>
   | IMetaHandlerDecorate<P>
