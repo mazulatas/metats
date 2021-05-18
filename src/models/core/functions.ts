@@ -15,5 +15,5 @@ export interface IFieldDecoratorFunction<T = any> {
 }
 
 export interface IParamDecoratorFunction<T = any> {
-  (constructorFunction: constructor<T>, paramName: string, index: number): void
+  (constructorFunction: constructor<T>, methodName: string, index: number): void
 }

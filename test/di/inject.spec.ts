@@ -14,4 +14,19 @@ describe('Inject', () => {
     const testInstance = new TestClass()
     expect(testInstance.testField).toBeInstanceOf(InjectClass)
   })
+
+  it('should lazy inject instance in class', () => {
+    class InjectClass {}
+    Injector.set({ provide: InjectClass })
+
+    @Bean()
+    class TestClass {
+      @Inject({ token: InjectClass, strategy: 'lazy' }) public testField?: InjectClass
+    }
+
+    const testInstance = new TestClass()
+    const description = Reflect.getOwnPropertyDescriptor(testInstance, 'testField') as PropertyDescriptor
+    expect(description.value).toBeUndefined()
+    expect(typeof description.get).toEqual('function')
+  })
 })
