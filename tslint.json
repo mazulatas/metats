@@ -43,7 +43,7 @@
       "severity": "warning"
     },
     "typedef": [
-      true,
+      false,
       "call-signature",
       "parameter",
       "property-declaration",

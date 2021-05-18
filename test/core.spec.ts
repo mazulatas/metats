@@ -1,6 +1,7 @@
-import { constructor, makeConstructorDecorator, makeMethodDecorator, makeParamDecorator } from '../src/core/core'
-import { Bean } from '../src/decorators'
-import { IMetaNoProps, MomentCall } from '../src/models'
+import { Bean, makeConstructorDecorator, makeFieldDecorator, makeMethodDecorator, makeParamDecorator } from '../src'
+import { getOriginalCtor } from '../src/core'
+import { MetaFactoryNoProps } from '../src/models/core/meta-factory'
+import { IType } from '../src/models/core/type'
 
 describe('Meta', () => {
 
@@ -22,20 +23,20 @@ describe('Meta', () => {
     })
 
     describe('decorate constructor', () => {
-      let testDecoratorAfterCallCtor1: IMetaNoProps
-      let testDecoratorAfterCallCtor2: IMetaNoProps
-      let testDecoratorBeforeCallCtor1: IMetaNoProps
-      let testDecoratorBeforeCallCtor2: IMetaNoProps
-      let testDecoratorDecorateCallCtor1: IMetaNoProps
-      let testDecoratorDecorateCallCtor2: IMetaNoProps
+      let testDecoratorAfterCallCtor1: MetaFactoryNoProps
+      let testDecoratorAfterCallCtor2: MetaFactoryNoProps
+      let testDecoratorBeforeCallCtor1: MetaFactoryNoProps
+      let testDecoratorBeforeCallCtor2: MetaFactoryNoProps
+      let testDecoratorDecorateCallCtor1: MetaFactoryNoProps
+      let testDecoratorDecorateCallCtor2: MetaFactoryNoProps
 
       beforeEach(() => {
-        testDecoratorAfterCallCtor1 = makeConstructorDecorator(MomentCall.afterCallCtor, spy1)
-        testDecoratorAfterCallCtor2 = makeConstructorDecorator(MomentCall.afterCallCtor, spy2)
-        testDecoratorBeforeCallCtor1 = makeConstructorDecorator(MomentCall.beforeCallCtor, spy3)
-        testDecoratorBeforeCallCtor2 = makeConstructorDecorator(MomentCall.beforeCallCtor, spy4)
-        testDecoratorDecorateCallCtor1 = makeConstructorDecorator(MomentCall.decorate, spy5)
-        testDecoratorDecorateCallCtor2 = makeConstructorDecorator(MomentCall.decorate, spy6)
+        testDecoratorAfterCallCtor1 = makeConstructorDecorator({handler: spy1, moment: 'afterCreateInstance'})
+        testDecoratorAfterCallCtor2 = makeConstructorDecorator({handler: spy2, moment: 'afterCreateInstance'})
+        testDecoratorBeforeCallCtor1 = makeConstructorDecorator({handler: spy3, moment: 'beforeCreateInstance'})
+        testDecoratorBeforeCallCtor2 = makeConstructorDecorator({handler: spy4, moment: 'beforeCreateInstance'})
+        testDecoratorDecorateCallCtor1 = makeConstructorDecorator({handler: spy5, moment: 'decorate'})
+        testDecoratorDecorateCallCtor2 = makeConstructorDecorator({handler: spy6, moment: 'decorate'})
       })
 
       it('should decorate', () => {
@@ -132,20 +133,20 @@ describe('Meta', () => {
     })
 
     describe('decorate methods', () => {
-      let methodDecoratorDecorateCtor1: IMetaNoProps
-      let methodDecoratorDecorateCtor2: IMetaNoProps
-      let methodDecoratorAfterCallCtor1: IMetaNoProps
-      let methodDecoratorAfterCallCtor2: IMetaNoProps
-      let methodDecoratorBeforeCallCtor1: IMetaNoProps
-      let methodDecoratorBeforeCallCtor2: IMetaNoProps
+      let methodDecoratorDecorateCtor1: MetaFactoryNoProps
+      let methodDecoratorDecorateCtor2: MetaFactoryNoProps
+      let methodDecoratorAfterCallCtor1: MetaFactoryNoProps
+      let methodDecoratorAfterCallCtor2: MetaFactoryNoProps
+      let methodDecoratorBeforeCallCtor1: MetaFactoryNoProps
+      let methodDecoratorBeforeCallCtor2: MetaFactoryNoProps
 
       beforeEach(() => {
-        methodDecoratorAfterCallCtor1 = makeMethodDecorator(MomentCall.afterCallCtor, spy1)
-        methodDecoratorAfterCallCtor2 = makeMethodDecorator(MomentCall.afterCallCtor, spy2)
-        methodDecoratorBeforeCallCtor1 = makeMethodDecorator(MomentCall.beforeCallCtor, spy3)
-        methodDecoratorBeforeCallCtor2 = makeMethodDecorator(MomentCall.beforeCallCtor, spy4)
-        methodDecoratorDecorateCtor1 = makeMethodDecorator(MomentCall.decorate, spy5)
-        methodDecoratorDecorateCtor2 = makeMethodDecorator(MomentCall.decorate, spy6)
+        methodDecoratorAfterCallCtor1 = makeMethodDecorator({handler: spy1, moment: 'afterCreateInstance'})
+        methodDecoratorAfterCallCtor2 = makeMethodDecorator({handler: spy2, moment: 'afterCreateInstance'})
+        methodDecoratorBeforeCallCtor1 = makeMethodDecorator({handler: spy3, moment: 'beforeCreateInstance'})
+        methodDecoratorBeforeCallCtor2 = makeMethodDecorator({handler: spy4, moment: 'beforeCreateInstance'})
+        methodDecoratorDecorateCtor1 = makeMethodDecorator({handler: spy5, moment: 'decorate'})
+        methodDecoratorDecorateCtor2 = makeMethodDecorator({handler: spy6, moment: 'decorate'})
       })
 
       it('should decorate method after call ctor', () => {
@@ -225,91 +226,60 @@ describe('Meta', () => {
 
     })
 
-    describe('decorate param', () => {
-      let paramDecoratorDecorateCtor1: IMetaNoProps
-      let paramDecoratorDecorateCtor2: IMetaNoProps
-      let paramDecoratorAfterCallCtor1: IMetaNoProps
-      let paramDecoratorAfterCallCtor2: IMetaNoProps
-      let paramDecoratorBeforeCallCtor1: IMetaNoProps
-      let paramDecoratorBeforeCallCtor2: IMetaNoProps
+    describe('decorate field', () => {
+      let fieldDecoratorDecorateCtor1: MetaFactoryNoProps
+      let fieldDecoratorDecorateCtor2: MetaFactoryNoProps
+      let fieldDecoratorAfterCallCtor1: MetaFactoryNoProps
+      let fieldDecoratorAfterCallCtor2: MetaFactoryNoProps
+      let fieldDecoratorBeforeCallCtor1: MetaFactoryNoProps
+      let fieldDecoratorBeforeCallCtor2: MetaFactoryNoProps
 
       beforeEach(() => {
-        paramDecoratorAfterCallCtor1 = makeParamDecorator(MomentCall.afterCallCtor, spy1)
-        paramDecoratorAfterCallCtor2 = makeParamDecorator(MomentCall.afterCallCtor, spy2)
-        paramDecoratorBeforeCallCtor1 = makeParamDecorator(MomentCall.beforeCallCtor, spy3)
-        paramDecoratorBeforeCallCtor2 = makeParamDecorator(MomentCall.beforeCallCtor, spy4)
-        paramDecoratorDecorateCtor1 = makeParamDecorator(MomentCall.decorate, spy5)
-        paramDecoratorDecorateCtor2 = makeParamDecorator(MomentCall.decorate, spy6)
+        fieldDecoratorAfterCallCtor1 = makeFieldDecorator({handler: spy1, moment: 'afterCreateInstance'})
+        fieldDecoratorAfterCallCtor2 = makeFieldDecorator({handler: spy2, moment: 'afterCreateInstance'})
+        fieldDecoratorBeforeCallCtor1 = makeFieldDecorator({handler: spy3, moment: 'beforeCreateInstance'})
+        fieldDecoratorBeforeCallCtor2 = makeFieldDecorator({handler: spy4, moment: 'beforeCreateInstance'})
+        fieldDecoratorDecorateCtor1 = makeFieldDecorator({handler: spy5, moment: 'decorate'})
+        fieldDecoratorDecorateCtor2 = makeFieldDecorator({handler: spy6, moment: 'decorate'})
+      })
+
+      it('should decorate field after call ctor', () => {
+        @Bean()
+        class TestClass {
+          @fieldDecoratorAfterCallCtor1()
+          private field: any
+        }
+        const testInstance = new TestClass()
+        expect(testInstance).toBeTruthy()
+        expect(spy1).toHaveBeenCalled()
+      })
+    })
+
+    describe('decorate param', () => {
+      let paramDecoratorDecorateCtor1: MetaFactoryNoProps
+      let paramDecoratorDecorateCtor2: MetaFactoryNoProps
+      let paramDecoratorAfterCallCtor1: MetaFactoryNoProps
+      let paramDecoratorAfterCallCtor2: MetaFactoryNoProps
+      let paramDecoratorBeforeCallCtor1: MetaFactoryNoProps
+      let paramDecoratorBeforeCallCtor2: MetaFactoryNoProps
+
+      beforeEach(() => {
+        paramDecoratorAfterCallCtor1 = makeParamDecorator({handler: spy1, moment: 'afterCreateInstance'})
+        paramDecoratorAfterCallCtor2 = makeParamDecorator({handler: spy2, moment: 'afterCreateInstance'})
+        paramDecoratorBeforeCallCtor1 = makeParamDecorator({handler: spy3, moment: 'beforeCreateInstance'})
+        paramDecoratorBeforeCallCtor2 = makeParamDecorator({handler: spy4, moment: 'beforeCreateInstance'})
+        paramDecoratorDecorateCtor1 = makeParamDecorator({handler: spy5, moment: 'decorate'})
+        paramDecoratorDecorateCtor2 = makeParamDecorator({handler: spy6, moment: 'decorate'})
       })
 
       it('should decorate param after call ctor', () => {
         @Bean()
         class TestClass {
-          @paramDecoratorAfterCallCtor1()
-          public testParam: string = ''
+          constructor(@paramDecoratorAfterCallCtor1() private field: any) {}
         }
-        const testInstance = new TestClass()
+        const testInstance = new TestClass(1)
         expect(testInstance).toBeTruthy()
         expect(spy1).toHaveBeenCalled()
-      })
-
-      it('should decorate param before call ctor', () => {
-        @Bean()
-        class TestClass {
-          @paramDecoratorBeforeCallCtor1()
-          public testParam: string = ''
-        }
-        const testInstance = new TestClass()
-        expect(testInstance).toBeTruthy()
-        expect(spy3).toHaveBeenCalled()
-      })
-
-      it('should decorate param decorate ctor', () => {
-        @Bean()
-        class TestClass {
-          @paramDecoratorDecorateCtor1()
-          public testParam: string = ''
-        }
-        const testInstance = new TestClass()
-        expect(testInstance).toBeTruthy()
-        expect(spy5).toHaveBeenCalled()
-      })
-
-      it('should decorate param without side effects all', () => {
-        @Bean()
-        class TestClass {
-          @paramDecoratorAfterCallCtor1()
-          @paramDecoratorAfterCallCtor2()
-          @paramDecoratorBeforeCallCtor1()
-          @paramDecoratorBeforeCallCtor2()
-          @paramDecoratorDecorateCtor1()
-          @paramDecoratorDecorateCtor2()
-          public testParam: string = ''
-        }
-        const testInstance = new TestClass()
-        expect(testInstance).toBeTruthy()
-        expect(spy1).toHaveBeenCalled()
-        expect(spy2).toHaveBeenCalled()
-        expect(spy3).toHaveBeenCalled()
-        expect(spy4).toHaveBeenCalled()
-        expect(spy5).toHaveBeenCalled()
-        expect(spy6).toHaveBeenCalled()
-      })
-
-      it('should not mutate parameters after decoration', () => {
-        const returned: string = '123'
-        @Bean()
-        class TestClass {
-          @paramDecoratorAfterCallCtor1()
-          @paramDecoratorAfterCallCtor2()
-          @paramDecoratorBeforeCallCtor1()
-          @paramDecoratorBeforeCallCtor2()
-          @paramDecoratorDecorateCtor1()
-          @paramDecoratorDecorateCtor2()
-          public testParam: string = returned
-        }
-        const testInstance = new TestClass()
-        expect(testInstance.testParam).toEqual(returned)
       })
     })
   })
@@ -320,9 +290,12 @@ describe('Meta', () => {
 
       it('should instantiate in decorator handler and compare with original', (done) => {
         let decoratorInstance
-        const testCtorDecorator = makeConstructorDecorator(MomentCall.decorate, (ctx) => {
+
+        function handler(ctx: IType<TestClass>) {
           decoratorInstance = new ctx()
-        })
+        }
+
+        const testCtorDecorator = makeConstructorDecorator({ moment: 'decorate', handler })
 
         @testCtorDecorator()
         class TestClass {}
@@ -332,22 +305,29 @@ describe('Meta', () => {
       })
 
       it('should pass the constructor to the decorator handler before creating an instance', (done) => {
-        const testCtorDecorator = makeConstructorDecorator(MomentCall.beforeCallCtor, (ctx) => {
-          const ctor = constructor(TestClass)
+
+        function handler(ctx: IType<TestClass>) {
+          const ctor = getOriginalCtor(TestClass)
           expect(ctor).toEqual(ctx)
           done()
-        })
+        }
+
+        const testCtorDecorator = makeConstructorDecorator({ moment: 'beforeCreateInstance', handler })
 
         @testCtorDecorator()
         class TestClass {}
-        const _ = new TestClass()
+        // tslint:disable-next-line:no-unused-expression
+        new TestClass()
       })
 
       it('should pass the constructor to the decorator handler before creating an instance', (done) => {
         let decoratorInstance
-        const testCtorDecorator = makeConstructorDecorator(MomentCall.afterCallCtor, (ctx) => {
+
+        function handler(ctx: TestClass) {
           decoratorInstance = ctx
-        })
+        }
+
+        const testCtorDecorator = makeConstructorDecorator({ moment: 'afterCreateInstance', handler })
 
         @testCtorDecorator()
         class TestClass {}
@@ -358,24 +338,19 @@ describe('Meta', () => {
 
       it('must pass the decoration parameters to the constructor', (done) => {
         const testObj = { test: '123' }
-        const testCtorDecorator = makeConstructorDecorator<{ test: string }>(MomentCall.decorate, (_, props) => {
+
+        function handler(ctx: any, props: { test: string }) {
           expect(testObj).toEqual(props)
           expect(testObj.test).toEqual(props.test)
           done()
-        })
+        }
+
+        const testCtorDecorator = makeConstructorDecorator<{ test: string }>({ moment: 'decorate', handler })
 
         @testCtorDecorator(testObj)
         class TestClass {}
       })
     })
 
-    describe('decorate methods', () => {
-      // TODO
-    })
-
-    describe('decorate param', () => {
-      // TODO
-    })
   })
-
 })
