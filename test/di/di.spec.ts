@@ -3,10 +3,12 @@ import { Inject, Injectable } from '../../src/di'
 describe('DI', () => {
   it('should ddd', () => {
     @Injectable()
-    class TestClass1 {}
+    class TestClass1 {
+    }
 
     @Injectable()
     class TestClass2 {
+
       @Inject(TestClass1) public testField: TestClass1
     }
 

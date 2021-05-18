@@ -15,6 +15,10 @@ export function getGlobalThis(): NodeJS.Global | Window {
   }
 }
 
+export function checkDecorated(cls: IFakeCtor | ICtor): boolean {
+  return hasDeepField(cls, ORIGINAL_CTOR) || hasDeepField(cls, FAKE_CTOR)
+}
+
 export function checkFakeCtor(cls: IFakeCtor | ICtor): boolean {
   return hasDeepField(cls, ORIGINAL_CTOR)
 }
@@ -30,7 +34,7 @@ export function getFakeCtor(ctor: IFakeCtor | ICtor): IFakeCtor {
 export function hasDeepField(cls: IFakeCtor | ICtor | any, name: string | symbol, depth = 0): boolean {
   if (!cls) return false
   if (depth > depthGlobal) return false
-  return Reflect.has(cls, name) || hasDeepField(cls.prototype, name, +1)
+  return Reflect.has(cls, name) || hasDeepField(cls.prototype, name, depth + 1)
 }
 
 export function getDeepField<R>(cls: IFakeCtor | ICtor | any, name: string | symbol, depth = 0): R {

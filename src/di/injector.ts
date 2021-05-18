@@ -1,4 +1,4 @@
-import { checkFakeCtor, getOriginalCtor } from '../core/utils'
+import { checkDecorated, checkFakeCtor, getFakeCtor, getOriginalCtor } from '../core/utils'
 import { INJECTOR } from '../models/core/sumbols'
 import { IType } from '../models/core/type'
 import { IInjector } from '../models/di/injector'
@@ -90,9 +90,9 @@ export class ProvideWrapper<T> {
 
   private createNewInstance(): T {
     const { provide } = this.providers
-    let factory
+    let factory: any
     if (provide instanceof InjectionToken) factory = provide.provider
-    else factory = provide as any
+    else factory = checkDecorated(provide as any) ? getFakeCtor(provide as any) : provide
     const instance = new factory()
     if (instance) {
       Injector.setInjector(factory, this.parentInjector)

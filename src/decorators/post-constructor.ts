@@ -1,5 +1,4 @@
-import { makeMethodDecorator } from '../core/core'
-import { asyncHandler, callMethod } from '../core/utils'
+import { asyncHandler, callMethod, makeMethodDecorator } from '../core'
 
 export const PostConstructor = makeMethodDecorator({ handler: asyncHandler(postConstructorHandler), moment: 'afterCreateInstance' })
 

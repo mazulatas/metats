@@ -1,8 +1,12 @@
 import {
+  asyncHandler,
+  callMethod,
+  getFakeCtor,
+  getGlobalThis,
+  getResolver,
   makeConstructorDecorator,
-  makeMethodDecorator,
-} from '../core/core'
-import { asyncHandler, callMethod, getFakeCtor, getGlobalThis, getResolver } from '../core/utils'
+  makeMethodDecorator
+} from '../core'
 import { APP_ROOT } from '../models/core/sumbols'
 
 export const App = makeConstructorDecorator({ handler: asyncHandler(handlerDecoratorAppInstanceCreator), moment: 'decorate' })
