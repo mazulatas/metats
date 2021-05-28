@@ -1,4 +1,4 @@
-import { Injectable, InjectionToken, Injector } from '../../src/di'
+import { Injectable, InjectionToken, Injector } from '../../src'
 
 describe('Injectable', () => {
 

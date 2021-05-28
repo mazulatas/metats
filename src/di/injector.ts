@@ -2,7 +2,7 @@ import { checkDecorated, checkFakeCtor, getFakeCtor, getOriginalCtor } from '../
 import { IInjector, IInjectorConfig, INJECTOR, IType, ProvidedStrategy, Token } from '../models'
 import { InjectionToken } from './injection-token'
 
-export const defaultInjectorConfig: IInjectorConfig<InjectionToken<null>> = {
+export const defaultInjectorConfig: IInjectorConfig<null> = {
   provide: InjectionToken.null(),
   providedIn: 'any'
 }
@@ -84,15 +84,26 @@ export class ProvideWrapper<T> {
   }
 
   private createNewInstance(): T {
-    const { provide } = this.providers
-    let factory: any
-    if (provide instanceof InjectionToken) factory = provide.provider
-    else factory = checkDecorated(provide as any) ? getFakeCtor(provide as any) : provide
-    const instance = new factory()
+    const { provide, deps } = this.providers
+    const resolveDeps = (deps || []).map(token => this.parentInjector.get(token))
+    const [ factory, instance ] = resolveFactory(provide, resolveDeps)
     if (instance) {
       Injector.setInjector(factory, this.parentInjector)
       return instance
     }
     return factory()
   }
+}
+
+function resolveFactory(provide: InjectionToken<any> | any, resolveDeps: any[]) {
+  let factory: any
+  let instance: any
+  if (provide instanceof InjectionToken) factory = provide.provider
+  else factory = checkDecorated(provide as any) ? getFakeCtor(provide as any) : provide
+  try {
+    instance = new factory.apply(factory, resolveDeps)
+  } catch (_) {
+    instance = factory.apply(factory, resolveDeps)
+  }
+  return [ factory, instance ]
 }

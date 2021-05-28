@@ -1,20 +1,14 @@
-import { ContextType } from '../models/core/context-type'
-import { ICtor } from '../models/core/ctor'
-import { IFakeCtor } from '../models/core/fake-ctor'
 import {
+  ContextType, FAKE_CTOR,
+  HandlerCallMoment, IBaseHandler,
   IConstructorDecorationFunction,
-  IFieldDecoratorFunction,
+  IConstructorHandler, ICtor, IFakeCtor, IFieldDecoratorFunction, IFieldHandler,
   IMethodDecoratorFunction,
-  IParamDecoratorFunction
-} from '../models/core/functions'
-import { HandlerCallMoment } from '../models/core/handler-call-moment'
-import { IBaseHandler, IConstructorHandler, IFieldHandler, IMethodHandler, IParameterHandler } from '../models/core/handlers'
-import { MetaFactory } from '../models/core/meta-factory'
+  IMethodHandler, IParamDecoratorFunction, IParameterHandler, IResolver,
+  MetaFactory, ORIGINAL_CTOR, stub
+} from '../models'
 import { IParamsDecoratorMaker } from '../models/core/params-decorator-maker'
-import { IResolver } from '../models/core/resolver'
 import { IResolverContext } from '../models/core/resolver-context'
-import { stub } from '../models/core/stub'
-import { FAKE_CTOR, ORIGINAL_CTOR } from '../models/core/sumbols'
 import { checkFakeCtor, getResolver } from './utils'
 
 const defaultHandlerCallMoment: HandlerCallMoment = 'decorate'

@@ -4,6 +4,6 @@ import { Token } from './token'
 
 export interface IInjectParameters {
   token: Token<any>
-  injectOf: ProvidedStrategy
+  injectOf?: ProvidedStrategy
   strategy?: InjectStrategy
 }

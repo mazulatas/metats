@@ -7,4 +7,5 @@ export interface IInjectorConfig<T> {
   provideAs?: Token<T>
   providedIn?: ProvidedStrategy
   parentInjector?: IInjector
+  deps?: Token<any>[]
 }
