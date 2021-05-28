@@ -87,11 +87,8 @@ export class ProvideWrapper<T> {
     const { provide, deps } = this.providers
     const resolveDeps = (deps || []).map(token => this.parentInjector.get(token))
     const [ factory, instance ] = resolveFactory(provide, resolveDeps)
-    if (instance) {
-      Injector.setInjector(factory, this.parentInjector)
-      return instance
-    }
-    return factory()
+    if (instance) Injector.setInjector(factory, this.parentInjector)
+    return instance
   }
 }
 
@@ -101,9 +98,9 @@ function resolveFactory(provide: InjectionToken<any> | any, resolveDeps: any[]) 
   if (provide instanceof InjectionToken) factory = provide.provider
   else factory = checkDecorated(provide as any) ? getFakeCtor(provide as any) : provide
   try {
-    instance = new factory.apply(factory, resolveDeps)
+    instance = new factory(...resolveDeps)
   } catch (_) {
-    instance = factory.apply(factory, resolveDeps)
+    instance = factory(...resolveDeps)
   }
   return [ factory, instance ]
 }

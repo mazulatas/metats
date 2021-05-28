@@ -1,7 +1,6 @@
-import { Bean, makeConstructorDecorator, makeFieldDecorator, makeMethodDecorator, makeParamDecorator } from '../src'
-import { getOriginalCtor } from '../src/core'
-import { MetaFactoryNoProps } from '../src/models/core/meta-factory'
-import { IType } from '../src/models/core/type'
+import { Bean, getOriginalCtor, IType, makeConstructorDecorator, makeFieldDecorator, makeMethodDecorator,
+  makeParamDecorator,
+  MetaFactoryNoProps } from '../src'
 
 describe('Meta', () => {
 
