@@ -1,10 +1,5 @@
-import { checkDecorated, checkFakeCtor, getFakeCtor, getOriginalCtor } from '../core/utils'
-import { INJECTOR } from '../models/core/sumbols'
-import { IType } from '../models/core/type'
-import { IInjector } from '../models/di/injector'
-import { IInjectorConfig } from '../models/di/injector-config'
-import { ProvidedStrategy } from '../models/di/provided-strategy'
-import { Token } from '../models/di/token'
+import { checkDecorated, checkFakeCtor, getFakeCtor, getOriginalCtor } from '../core'
+import { IInjector, IInjectorConfig, INJECTOR, IType, ProvidedStrategy, Token } from '../models'
 import { InjectionToken } from './injection-token'
 
 export const defaultInjectorConfig: IInjectorConfig<InjectionToken<null>> = {

@@ -1,4 +1,4 @@
-import { InjectionToken, Injector } from '../../src/di'
+import { InjectionToken, Injector } from '../../src'
 
 describe('Injector', () => {
   it('should create instance', () => {

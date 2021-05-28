@@ -1,7 +1,4 @@
-import { stub } from '../models/core/stub'
-import { NULL_TOKEN } from '../models/core/sumbols'
-import { IInjectionToken } from '../models/di/injection-token'
-import { Factory } from '../models/di/token'
+import { Factory, IInjectionToken, NULL_TOKEN, stub } from '../models'
 
 export class InjectionToken<T> implements IInjectionToken<T> {
 

@@ -1,7 +1,6 @@
-import { makeConstructorDecorator } from '..'
-import { getOriginalCtor } from '../core/utils'
-import { IType } from '../models/core/type'
-import { IInjectableParameters } from '../models/di/injectable-parameters'
+import { IInjectableParameters, makeConstructorDecorator } from '..'
+import { getOriginalCtor } from '../core'
+import { IType } from '../models'
 import { defaultInjectorConfig, Injector } from './injector'
 
 export const Injectable = makeConstructorDecorator<IInjectableParameters | void>({ handler: injectableHandler, moment: 'decorate' })
