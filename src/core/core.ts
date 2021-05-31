@@ -1,11 +1,22 @@
 import {
-  ContextType, FAKE_CTOR,
-  HandlerCallMoment, IBaseHandler,
+  ContextType,
+  FAKE_CTOR,
+  HandlerCallMoment,
+  IBaseHandler,
   IConstructorDecorationFunction,
-  IConstructorHandler, ICtor, IFakeCtor, IFieldDecoratorFunction, IFieldHandler,
+  IConstructorHandler,
+  ICtor,
+  IFakeCtor,
+  IFieldDecoratorFunction,
+  IFieldHandler,
   IMethodDecoratorFunction,
-  IMethodHandler, IParamDecoratorFunction, IParameterHandler, IResolver,
-  MetaFactory, ORIGINAL_CTOR, stub
+  IMethodHandler,
+  IParamDecoratorFunction,
+  IParameterHandler,
+  IResolver,
+  MetaFactory,
+  ORIGINAL_CTOR,
+  stub
 } from '../models'
 import { IParamsDecoratorMaker } from '../models/core/params-decorator-maker'
 import { IResolverContext } from '../models/core/resolver-context'
@@ -33,11 +44,13 @@ export function makeMethodDecorator<P>(
 }
 
 export function makeFieldDecorator<P>(
-  params: IParamsDecoratorMaker<IFieldHandler<P>, P> | IParamsDecoratorMaker<IFieldHandler<P>, P>[]
+  params: IParamsDecoratorMaker<IFieldHandler<P>, P> | IParamsDecoratorMaker<IFieldHandler<P>, P>[],
+  defaultDescriptor?: Partial<PropertyDescriptor>
 ): MetaFactory<P, IFieldDecoratorFunction> {
   return propsAggregator(
     Array.isArray(params) ? params : [params],
-    'field'
+    'field',
+    fieldDescriptor(defaultDescriptor)
   )
 }
 
@@ -67,9 +80,16 @@ function propsAggregator<P, H extends IBaseHandler, R>(
         name: param.name
       }))
       resolver.add(context)
-      return postCall(target, resolver)
+      return postCall(target, resolver, ...args)
     }
   } as MetaFactory<P, R>
+}
+
+function fieldDescriptor(descriptor: Partial<PropertyDescriptor> = {}) {
+  return function(target: any, _: any, fieldName: string) {
+    const fieldDesc = Reflect.getOwnPropertyDescriptor(target, fieldName) || {}
+    return { configurable: true, enumerable: true, writable: true, ...fieldDesc, ...descriptor }
+  }
 }
 
 function getFakeCtx(target: ICtor | IFakeCtor, resolver: IResolver): IFakeCtor {

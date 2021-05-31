@@ -71,11 +71,20 @@ export class Injector implements IInjector {
     return cell.getInstance(injectOf)
   }
 
+  public getConfig<T>(token: Token<T>): IInjectorConfig<T> | null {
+    let innerToken = token
+    if (checkFakeCtor(token as any)) innerToken = getOriginalCtor(token as any)
+    if (!this.injectStorage.has(innerToken) && !this.parent) return null
+    if (!this.injectStorage.has(innerToken) && this.parent) return this.parent.getConfig(innerToken)
+    const wrapper = this.injectStorage.get(innerToken)
+    return wrapper?.providers || null
+  }
+
 }
 
 export class ProvideWrapper<T> {
   private instance?: T
-  constructor(private providers: IInjectorConfig<T>, private parentInjector: IInjector) {}
+  constructor(public providers: IInjectorConfig<T>, private parentInjector: IInjector) {}
 
   public getInstance(injectOf?: ProvidedStrategy): T {
     if (this.providers.providedIn === 'any' || injectOf === 'any') return this.createNewInstance()

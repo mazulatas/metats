@@ -27,7 +27,6 @@
     "member-access": true,
     "array-type": false,
     "arrow-parens": false,
-    "no-null-keyword": true,
     "return-undefined": true,
     "no-empty-interface": false,
     "no-non-null-assertion": true,

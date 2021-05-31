@@ -1,47 +1,38 @@
-import { Bean, Inject, InjectionToken, Injector } from '../../src'
+import { Inject, Injectable, InjectionToken, Injector } from '../../src'
 
 describe('Inject', () => {
-  it('should inject instance in class', () => {
-    class InjectClass {}
+
+  it('inject in constructor', () => {
+    class InjectClass {
+      public test = 1
+    }
     Injector.set({ provide: InjectClass })
 
-    @Bean()
+    @Injectable()
     class TestClass {
-      @Inject(InjectClass) public testField?: InjectClass
+      constructor(@Inject(InjectClass) public field: InjectClass) {
+      }
     }
 
-    const testInstance = new TestClass()
-    expect(testInstance.testField).toBeInstanceOf(InjectClass)
+    const t = Injector.get(TestClass)
+    expect(t.field.test).toEqual(1)
   })
 
-  it('should lazy inject instance in class', () => {
-    class InjectClass {}
-    Injector.set({ provide: InjectClass })
+  it('inject inject token in constructor', () => {
+    class InjectClass {
+      public test = 1
+    }
+    const testToken = InjectionToken.create('test token')
+    Injector.set({ provide: InjectClass, provideAs: testToken })
 
-    @Bean()
+    @Injectable()
     class TestClass {
-      @Inject({ token: InjectClass, strategy: 'lazy' }) public testField?: InjectClass
+      constructor(@Inject(testToken) public field: InjectClass) {
+      }
     }
 
-    const testInstance = new TestClass()
-    const description = Reflect.getOwnPropertyDescriptor(testInstance, 'testField') as PropertyDescriptor
-    expect(description.value).toBeUndefined()
-    expect(typeof description.get).toEqual('function')
+    const t = Injector.get(TestClass)
+    expect(t.field.test).toEqual(1)
   })
 
-  it('should inject object', () => {
-    const testToken = InjectionToken.create('TestToken')
-    const testToken1 = InjectionToken.create('TestToken1')
-    const testObj = { test: 1 }
-    Injector.set({ provide: () => (testObj), provideAs: testToken })
-    Injector.set({ provide: (token) => token, provideAs: testToken1, deps: [ testToken ] })
-
-    @Bean()
-    class TestClass {
-      @Inject(testToken1) public testField?: { test: number }
-    }
-
-    const testInstance = new TestClass()
-    expect(testInstance.testField).toEqual(testObj)
-  })
 })

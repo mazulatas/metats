@@ -1,4 +1,5 @@
 export * from './injector'
 export * from './injectable'
 export * from './inject'
+export * from './inject-field'
 export * from './injection-token'

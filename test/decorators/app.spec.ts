@@ -1,5 +1,4 @@
-import { App, bootstrap, cleanAppRoot } from '../../src'
-import { stub } from '../../src/models/core/stub'
+import { App, bootstrap, cleanAppRoot, stub } from '../../src'
 
 describe('App decorator', () => {
 

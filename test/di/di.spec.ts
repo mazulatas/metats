@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '../../src/di'
+import { Injectable, InjectField } from '../../src'
 
 describe('DI', () => {
   it('should ddd', () => {
@@ -9,12 +9,12 @@ describe('DI', () => {
     @Injectable()
     class TestClass2 {
 
-      @Inject(TestClass1) public testField: TestClass1
+      @InjectField(TestClass1) public testField: TestClass1
     }
 
     @Injectable()
     class TestClass3 {
-      @Inject(TestClass2) public testField2: TestClass2
+      @InjectField(TestClass2) public testField2: TestClass2
     }
 
     const instance = new TestClass3()

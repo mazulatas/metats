@@ -5,4 +5,5 @@ import { Token } from './token'
 export interface IInjector {
   get<T>(token: Token<T>, injectOf?: ProvidedStrategy): T
   set<T>(providers: IInjectorConfig<T> | IInjectorConfig<T>[]): void
+  getConfig<T>(token: Token<T>): IInjectorConfig<T> | null
 }

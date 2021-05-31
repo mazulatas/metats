@@ -1,5 +1,4 @@
-import { ICtor } from '../models/core/ctor'
-import { IResolver } from '../models/core/resolver'
+import { ICtor, IResolver } from '../models'
 import { IResolverContext } from '../models/core/resolver-context'
 
 export class Resolver implements IResolver {
@@ -7,7 +6,7 @@ export class Resolver implements IResolver {
   private context: IResolverContext[] = []
 
   public add(params: IResolverContext[]): void {
-    this.context.push(...params)
+    this.context = [ ...params, ...this.context ]
   }
 
   public resolveDecorationTime(target: ICtor) {
