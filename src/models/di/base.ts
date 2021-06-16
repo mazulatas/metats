@@ -1,5 +1,5 @@
 import { IType } from '../core'
-import { AbstractInjectionToken } from './injection-token'
+import { IInjectionToken } from './injection-token'
 
 export type Provider<T> = ShortProvider<T> | ValueProvider<T> | FactoryProvider<T> | ClassProvider<T>
 export type ShortProvider<T> = IType<T>
@@ -8,7 +8,7 @@ export type FactoryProvider<T> = BaseProvider<{ useFactory: (...args: any[]) => 
 export type ClassProvider<T> = BaseProvider<{ useClass: IType<T> }, T>
 export type BaseProvider<O, T> = O & IFToken<T> & IFDeps & IFIsAny
 
-export type Token<T> = AbstractInjectionToken<T> | TypeToken<T>
+export type Token<T> = IInjectionToken | TypeToken<T>
 export type TypeToken<T> = IType<T>
 
 export type ProvideInStrategy = null | 'root' | 'any'

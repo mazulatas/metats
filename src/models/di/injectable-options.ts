@@ -1,4 +1,4 @@
-import { IFProvideAs, IFProvideIn } from './base'
+import { IFProvideAs, IFProvideIn, IFProviders } from './base'
 
-export interface IInjectableOptions extends IFProvideIn, IFProvideAs {
+export interface IInjectableOptions extends IFProvideIn, IFProvideAs, IFProviders {
 }

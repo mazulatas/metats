@@ -5,13 +5,14 @@ import { Injector } from './injector'
 export function bootstrap(services: IType<any>[], providers?: Provider<any>[]): void {
   services.forEach(s => {
     const resolver = getResolver(s)
-    if (!resolver.hasName('Service')) throw new Error(`${s.prototype.name} is not a service`)
+    if (!resolver.hasName('Injectable')) throw new Error(`${s.name} is not a injectable`)
   })
-  const rootInjector = Injector.create(providers)
+  const rootInjector = Injector.root
+  if (providers) rootInjector.set(providers)
+  Injector.bindParentInjector(services, rootInjector)
   services.forEach(s => {
     const injector = Injector.getInjector(s)
-    if (!injector) throw new Error(`${s.prototype.name} is not a injectable`)
-    injector.parent = rootInjector
+    if (!injector) throw new Error(`${s.name} is not a injectable`)
     injector.get(s)
   })
 }

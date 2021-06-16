@@ -5,9 +5,9 @@ describe('Injector', () => {
     class TestClass {
     }
 
-    Injector.set({ provide: TestClass })
+    Injector.root.set([TestClass])
 
-    const instance = Injector.get(TestClass)
+    const instance = Injector.root.get(TestClass)
     expect(instance).toBeInstanceOf(TestClass)
   })
 
@@ -15,10 +15,10 @@ describe('Injector', () => {
     class TestClass {
     }
 
-    Injector.set({ provide: TestClass })
+    Injector.root.set([{ token: TestClass, useClass: TestClass, isAny: true }])
 
-    const instance = Injector.get(TestClass)
-    const instance1 = Injector.get(TestClass)
+    const instance = Injector.root.get(TestClass)
+    const instance1 = Injector.root.get(TestClass)
     expect(instance).not.toBe(instance1)
   })
 
@@ -26,10 +26,10 @@ describe('Injector', () => {
     class TestClass {
     }
 
-    Injector.set({ provide: TestClass, providedIn: 'root' })
+    Injector.root.set([TestClass])
 
-    const instance = Injector.get(TestClass)
-    const instance1 = Injector.get(TestClass)
+    const instance = Injector.root.get(TestClass)
+    const instance1 = Injector.root.get(TestClass)
     expect(instance).toBe(instance1)
   })
 
@@ -40,9 +40,9 @@ describe('Injector', () => {
     class TestClass2 {
     }
 
-    Injector.set({ provide: TestClass1, provideAs: TestClass2 })
+    Injector.root.set([{ token: TestClass2, useClass: TestClass1 }])
 
-    const instance = Injector.get(TestClass2)
+    const instance = Injector.root.get(TestClass2)
     expect(instance).toBeInstanceOf(TestClass1)
   })
 
@@ -50,37 +50,20 @@ describe('Injector', () => {
     class TestClass {
     }
 
-    const token = InjectionToken.create('test token', TestClass)
-    Injector.set({ provide: TestClass, provideAs: token })
+    const token = InjectionToken.create('test token')
+    Injector.root.set([{ token: token, useClass: TestClass }])
 
-    const instance = Injector.get(token)
+    const instance = Injector.root.get(token)
     expect(instance).toBeInstanceOf(TestClass)
   })
 
   it('should create instance injector and inject', () => {
-    const newInjector = Injector.create()
+    const newInjector = Injector.create([], 'test_injector')
     class TestClass {
     }
-    newInjector.set({ provide: TestClass })
-    const instance = newInjector.get(TestClass)
-    expect(instance).toBeInstanceOf(TestClass)
-  })
 
-  it('should create instance injector and inject from root injector', () => {
-    const newInjector = Injector.create()
-    class TestClass {
-    }
-    Injector.set({ provide: TestClass })
+    newInjector.set([TestClass])
     const instance = newInjector.get(TestClass)
-    expect(instance).toBeInstanceOf(TestClass)
-  })
-
-  it('should create instance injector and add instance class to root ', () => {
-    const newInjector = Injector.create()
-    class TestClass {
-    }
-    newInjector.set({ provide: TestClass, providedIn: 'root' })
-    const instance = Injector.get(TestClass)
     expect(instance).toBeInstanceOf(TestClass)
   })
 })

@@ -77,7 +77,7 @@ function propsAggregator<P, H extends IBaseHandler, R>(
         const param = params[i]
         if (param.prohibitDuplicates && !param.name)
           console.warn('duplication check is performed based on its name, name is not specified', param)
-        if (param.name && resolver.hasName(param.name)) throw new Error(`decorator duplication ${param.name} in ${target.name}`)
+        if (param.prohibitDuplicates && param.name && resolver.hasName(param.name)) throw new Error(`decorator duplication ${param.name} in ${target.name}`)
         context.push({
           type,
           handler: param.handler,

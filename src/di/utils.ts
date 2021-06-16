@@ -1,4 +1,4 @@
-import { getFakeCtor } from '../core'
+import { checkDecorated, getFakeCtor } from '../core'
 import { Provider } from '../models'
 import { IRecord } from '../models/di/record'
 
@@ -32,7 +32,7 @@ export function createRecords(providers: Provider<any>[]): IRecord[] {
 
 function createInstance(type: any, deps: any[] = []) {
   let instance: any
-  const faceCtor = getFakeCtor(type)
+  const faceCtor = checkDecorated(type) ? getFakeCtor(type) : type
   try {
     instance = new faceCtor(...deps)
   } catch (_) {
@@ -42,5 +42,5 @@ function createInstance(type: any, deps: any[] = []) {
 }
 
 export function injectError(msg: string, err?: Error) {
-  return new Error(`Inject error: ${msg} ${err ? ',' + err : ''}`)
+  return new Error(`Inject error: ${msg}${err ? ', ' + err : ''}`)
 }
