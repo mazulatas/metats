@@ -20,6 +20,7 @@ import {
 } from '../models'
 import { IParamsDecoratorMaker } from '../models/core/params-decorator-maker'
 import { IResolverContext } from '../models/core/resolver-context'
+import { ArgumentsWrapper } from './arguments-wrapper'
 import { checkFakeCtor, getResolver } from './utils'
 
 const defaultHandlerCallMoment: HandlerCallMoment = 'decorate'
@@ -71,14 +72,21 @@ function propsAggregator<P, H extends IBaseHandler, R>(
   return function(props?: P): any {
     return function(target: ICtor | IFakeCtor, ...args: any[]) {
       const resolver = getResolver(target)
-      const context: IResolverContext[] = params.map(param => ({
-        type,
-        handler: param.handler,
-        props: [param.propsMutator?.call(undefined, props) || props, ...args],
-        resolve: false,
-        moment: param?.moment || defaultHandlerCallMoment,
-        name: param.name
-      }))
+      const context: IResolverContext[] = []
+      for (let i = 0; i < params.length; i++) {
+        const param = params[i]
+        if (param.prohibitDuplicates && !param.name)
+          console.warn('duplication check is performed based on its name, name is not specified', param)
+        if (param.name && resolver.hasName(param.name)) throw new Error(`decorator duplication ${param.name} in ${target.name}`)
+        context.push({
+          type,
+          handler: param.handler,
+          props: [param.propsMutator?.call(undefined, props) || props, ...args],
+          resolve: false,
+          moment: param?.moment || defaultHandlerCallMoment,
+          name: param.name
+        })
+      }
       resolver.add(context)
       return postCall(target, resolver, ...args)
     }
@@ -93,16 +101,21 @@ function fieldDescriptor(descriptor: Partial<PropertyDescriptor> = {}) {
 }
 
 function getFakeCtx(target: ICtor | IFakeCtor, resolver: IResolver): IFakeCtor {
-  resolver.resolveDecorationTime(target)
   if (checkFakeCtor(target)) return target as IFakeCtor
+  const argsWrap = new ArgumentsWrapper()
   function fakeCtor(...args: any[]): object {
-    resolver.resolveBeforeCreateInstance(target)
-    const instance = new target(...args)
-    resolver.resolveAfterCreateInstance(instance)
+    resolver.resolveBeforeCreateInstance(target, argsWrap)
+    const argv = argsWrap.arguments || args
+    const instance = new target(...argv)
+    argsWrap.arguments = argv
+    resolver.resolveAfterCreateInstance(instance, argsWrap)
     return instance
   }
+  const descriptor = Reflect.getOwnPropertyDescriptor(fakeCtor, 'name')
+  Reflect.defineProperty(fakeCtor, 'name', { ...descriptor, value: (target.name + '_faceCtor') })
   Reflect.set(fakeCtor, ORIGINAL_CTOR, target)
   Reflect.set(target, FAKE_CTOR, fakeCtor)
   fakeCtor.prototype = target.prototype
+  resolver.resolveDecorationTime(target, argsWrap)
   return fakeCtor as IFakeCtor
 }

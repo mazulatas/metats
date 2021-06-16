@@ -1,6 +1,5 @@
-import { Factory } from './factory'
-
-export interface IInjectionToken<T> {
-  name: string | symbol
-  provider?: Factory<T>
+export declare abstract class AbstractInjectionToken<T> {
+  public static create<T>(desc: string): AbstractInjectionToken<T>
+  public name: string
+  protected constructor(desc: string)
 }

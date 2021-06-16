@@ -1,4 +1,4 @@
-import { ICtor, IResolver } from '../models'
+import { IArgumentsWrapper, ICtor, IResolver } from '../models'
 import { IResolverContext } from '../models/core/resolver-context'
 
 export class Resolver implements IResolver {
@@ -9,16 +9,16 @@ export class Resolver implements IResolver {
     this.context = [ ...params, ...this.context ]
   }
 
-  public resolveDecorationTime(target: ICtor) {
-    this.resolve(target, this.getContextByCallMoment('decorate'))
+  public resolveDecorationTime(target: ICtor, args: IArgumentsWrapper) {
+    this.resolve(target, this.getContextByCallMoment('decorate'), args)
   }
 
-  public resolveBeforeCreateInstance(target: ICtor) {
-    this.resolve(target, this.getContextByCallMoment('beforeCreateInstance'))
+  public resolveBeforeCreateInstance(target: ICtor, args: IArgumentsWrapper) {
+    this.resolve(target, this.getContextByCallMoment('beforeCreateInstance'), args)
   }
 
-  public resolveAfterCreateInstance(target: object) {
-    this.resolve(target, this.getContextByCallMoment('afterCreateInstance'))
+  public resolveAfterCreateInstance(target: object, args: IArgumentsWrapper) {
+    this.resolve(target, this.getContextByCallMoment('afterCreateInstance'), args)
   }
 
   public hasName(name: string): boolean {
@@ -33,10 +33,10 @@ export class Resolver implements IResolver {
     return this.context.filter(ctx => ctx.moment === runtime && !ctx.resolve)
   }
 
-  private resolve(target: object, resolveTarget: IResolverContext[]) {
+  private resolve(target: object, resolveTarget: IResolverContext[], args: IArgumentsWrapper) {
     resolveTarget.forEach(ctx => {
       try {
-        ctx.handler(target, ...ctx.props)
+        ctx.handler(target, ...[ ...ctx.props, args ])
         ctx.resolve = true
       } catch (e) {
         console.error(e)

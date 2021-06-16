@@ -19,6 +19,8 @@ export function checkFakeCtor(cls: IFakeCtor | ICtor): boolean {
   return hasDeepField(cls, ORIGINAL_CTOR)
 }
 
+export function getOriginalCtor(ctor: any): any
+export function getOriginalCtor<T>(ctor: any): T
 export function getOriginalCtor(ctor: IFakeCtor | ICtor): ICtor {
   return checkFakeCtor(ctor) ? getDeepField(ctor, ORIGINAL_CTOR) : ctor
 }

@@ -7,4 +7,5 @@ export interface IParamsDecoratorMaker<H extends IBaseHandler, P> {
   moment?: HandlerCallMoment
   name?: string
   propsMutator?: PropsMutator<P>
+  prohibitDuplicates?: boolean
 }
