@@ -1,7 +1,7 @@
 import { bootstrap, Inject, Injectable, Injector } from '../../src'
 
 describe('Bootstrap', () => {
-  it('should test', () => {
+  it('should test', (done) => {
 
     @Injectable()
     class TestClass2 {
@@ -10,7 +10,6 @@ describe('Bootstrap', () => {
     @Injectable()
     class TestClass1 {
       constructor(@Inject(TestClass2) public test: any, @Inject(Injector) public injector: Injector) {
-
         expect(test).toBeInstanceOf(TestClass2)
         expect(injector).toBeInstanceOf(Injector)
       }
@@ -23,6 +22,7 @@ describe('Bootstrap', () => {
       constructor(@Inject(TestClass1) public test: any, @Inject(Injector) public injector: Injector) {
         expect(test).toBeInstanceOf(TestClass1)
         expect(injector).toBeInstanceOf(Injector)
+        done()
       }
     }
 

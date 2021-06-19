@@ -8,14 +8,15 @@ function buildInjector(providers?: Provider<any>[], source?: string) {
 }
 
 export abstract class Injector {
-  public static NULL: Injector
   public static get root(): Injector {
     if (!Injector.innerRoot) Injector.innerRoot = Injector.create()
     return Injector.innerRoot
   }
 
   public static create(providers?: Provider<any>[], source?: string): Injector {
-    return buildInjector(providers, source)
+    const injector = buildInjector(providers, source)
+    injector.parent = Injector.innerRoot
+    return injector
   }
 
   public static getInjector(ctx: any): Injector | undefined {
@@ -49,9 +50,9 @@ export abstract class Injector {
     }
   }
 
-  private static innerRoot: Injector
+  private static innerRoot: Injector | null = null
 
-  public abstract parent?: Injector
+  public abstract parent: Injector | null
   protected constructor() {}
   public abstract get<T>(token: Token<T>, notFoundValue?: T): T
   public abstract set(providers: Provider<any>[]): void
@@ -61,7 +62,7 @@ export abstract class Injector {
 
 export class StaticInjector extends Injector {
 
-  public parent?: Injector
+  public parent: Injector | null
   private readonly records: IRecord[] = []
 
   constructor(providers?: Provider<any>[], public readonly source?: string) {

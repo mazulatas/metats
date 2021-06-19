@@ -1,4 +1,4 @@
-import { checkDecorated, getFakeCtor } from '../core'
+import { checkDecorated, getFakeCtor, getOriginalCtor } from '../core'
 import { Provider } from '../models'
 import { IRecord } from '../models/di/record'
 
@@ -12,7 +12,7 @@ export function createRecords(providers: Provider<any>[]): IRecord[] {
     let isAny = false
 
     if (typeof provider === 'function') {
-      token = provider
+      token = checkDecorated(provider) ? getOriginalCtor(provider) : provider
       fn = (...args) => createInstance(provider, args)
     }
 

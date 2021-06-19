@@ -3,10 +3,11 @@ import { Inject, Injectable, InjectionToken, Injector } from '../../src'
 describe('Inject', () => {
 
   it('inject in constructor', () => {
+    @Injectable()
     class InjectClass {
       public test = 1
     }
-    Injector.set({ provide: InjectClass })
+    Injector.root.set([InjectClass])
 
     @Injectable()
     class TestClass {
@@ -14,16 +15,18 @@ describe('Inject', () => {
       }
     }
 
-    const t = Injector.get(TestClass)
+    Injector.root.set([TestClass])
+    const t = Injector.root.get(TestClass)
     expect(t.field.test).toEqual(1)
   })
 
   it('inject inject token in constructor', () => {
+    @Injectable()
     class InjectClass {
       public test = 1
     }
     const testToken = InjectionToken.create('test token')
-    Injector.set({ provide: InjectClass, provideAs: testToken })
+    Injector.root.set([{ useClass: InjectClass, token: testToken }])
 
     @Injectable()
     class TestClass {
@@ -31,7 +34,8 @@ describe('Inject', () => {
       }
     }
 
-    const t = Injector.get(TestClass)
+    Injector.root.set([TestClass])
+    const t = Injector.root.get(TestClass)
     expect(t.field.test).toEqual(1)
   })
 
