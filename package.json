@@ -19,7 +19,6 @@
     "travis-deploy-once": "travis-deploy-once",
     "deployToNpm": "npm run test && npm run build && npm publish ./"
   },
-  "private": true,
   "dependencies": {
   },
   "devDependencies": {
