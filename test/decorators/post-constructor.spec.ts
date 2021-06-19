@@ -2,7 +2,7 @@ import { Bean, PostConstructor } from '../../src'
 
 describe('PostConstructor', () => {
   it('should call post constructor', (done) => {
-    let testInstance: TestClass
+    let testInstance: any
 
     @Bean()
     class TestClass {

@@ -62,7 +62,7 @@ export abstract class Injector {
 
 export class StaticInjector extends Injector {
 
-  public parent: Injector | null
+  public parent: Injector | null = null
   private readonly records: IRecord[] = []
 
   constructor(providers?: Provider<any>[], public readonly source?: string) {

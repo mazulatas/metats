@@ -299,7 +299,7 @@ describe('Meta', () => {
     describe('decorate constructor', () => {
 
       it('should instantiate in decorator handler and compare with original', (done) => {
-        let decoratorInstance
+        let decoratorInstance: any
 
         function handler(ctx: IType<TestClass>) {
           decoratorInstance = new ctx()
@@ -332,7 +332,7 @@ describe('Meta', () => {
       })
 
       it('should pass the constructor to the decorator handler before creating an instance', (done) => {
-        let decoratorInstance
+        let decoratorInstance: any
 
         function handler(ctx: TestClass) {
           decoratorInstance = ctx

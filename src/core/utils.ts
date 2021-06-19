@@ -3,14 +3,6 @@ import { Resolver } from './resolver'
 
 const depthGlobal = 3
 
-export function getGlobalThis(): NodeJS.Global | Window {
-  try {
-    return window
-  } catch {
-    return global
-  }
-}
-
 export function checkDecorated(cls: IFakeCtor | ICtor): boolean {
   return hasDeepField(cls, ORIGINAL_CTOR) || hasDeepField(cls, FAKE_CTOR)
 }
