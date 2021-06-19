@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "metajs": {
+    "metats": {
       "projectType": "library",
       "root": "",
       "sourceRoot": "/src",
@@ -27,5 +27,5 @@
       }
     }
   },
-  "defaultProject": "metajs"
+  "defaultProject": "metats"
 }

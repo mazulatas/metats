@@ -1,5 +1,5 @@
 {
-  "name": "@mazulatas/meta.js",
+  "name": "@mazulatas/metats",
   "version": "1.0.1",
   "scripts": {
     "ng": "ng",
@@ -65,7 +65,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mazulatas/meta.js.git"
+    "url": "git+https://github.com/mazulatas/metats.git"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/mazulatas"
