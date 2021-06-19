@@ -5,7 +5,7 @@ export interface IResolver {
   add(params: IResolverContext[]): void
   hasName(name: string): boolean
   isResolve(name: string): boolean
-  resolveDecorationTime(target: object, args: IArgumentsWrapper): void
+  resolveDecorationTime(target: object): void
   resolveBeforeCreateInstance(target: object, args: IArgumentsWrapper): void
   resolveAfterCreateInstance(target: object, args: IArgumentsWrapper): void
 }

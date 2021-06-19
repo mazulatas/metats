@@ -64,8 +64,8 @@ describe('Meta', () => {
         @testDecoratorDecorateCallCtor1()
         @testDecoratorDecorateCallCtor2()
         class TestClass {}
-        expect(spy5).toHaveBeenCalled()
         expect(spy6).toHaveBeenCalled()
+        expect(spy5).toHaveBeenCalled()
       })
 
       it('should decorate without side effects before create instance and after call constructor', () => {
@@ -76,6 +76,7 @@ describe('Meta', () => {
         expect(spy1).toHaveBeenCalled()
         expect(spy2).toHaveBeenCalled()
         expect(testInstance).toBeTruthy()
+        expect(testInstance).toBeInstanceOf(TestClass)
       })
 
       it('should decorate without side effects before create instance and before call constructor', () => {
@@ -86,6 +87,7 @@ describe('Meta', () => {
         expect(spy3).toHaveBeenCalled()
         expect(spy4).toHaveBeenCalled()
         expect(testInstance).toBeTruthy()
+        expect(testInstance).toBeInstanceOf(TestClass)
       })
 
       it('should decorate without side effects before and after call constructor', () => {
@@ -96,6 +98,7 @@ describe('Meta', () => {
         expect(spy1).toHaveBeenCalled()
         expect(spy3).toHaveBeenCalled()
         expect(testInstance).toBeTruthy()
+        expect(testInstance).toBeInstanceOf(TestClass)
       })
 
       it('should decorate without side effects before and after call constructor 2', () => {
@@ -110,6 +113,7 @@ describe('Meta', () => {
         expect(spy3).toHaveBeenCalled()
         expect(spy4).toHaveBeenCalled()
         expect(testInstance).toBeTruthy()
+        expect(testInstance).toBeInstanceOf(TestClass)
       })
 
       it('should decorate without side effects all', () => {
@@ -128,6 +132,7 @@ describe('Meta', () => {
         expect(spy5).toHaveBeenCalled()
         expect(spy6).toHaveBeenCalled()
         expect(testInstance).toBeTruthy()
+        expect(testInstance).toBeInstanceOf(TestClass)
       })
     })
 
@@ -157,6 +162,7 @@ describe('Meta', () => {
         const testInstance = new TestClass()
         expect(testInstance).toBeTruthy()
         expect(spy1).toHaveBeenCalled()
+        expect(testInstance).toBeInstanceOf(TestClass)
       })
 
       it('should decorate method before call ctor', () => {
@@ -168,6 +174,7 @@ describe('Meta', () => {
         const testInstance = new TestClass()
         expect(testInstance).toBeTruthy()
         expect(spy3).toHaveBeenCalled()
+        expect(testInstance).toBeInstanceOf(TestClass)
       })
 
       it('should decorate method decorate ctor', () => {
@@ -179,6 +186,7 @@ describe('Meta', () => {
         const testInstance = new TestClass()
         expect(testInstance).toBeTruthy()
         expect(spy5).toHaveBeenCalled()
+        expect(testInstance).toBeInstanceOf(TestClass)
       })
 
       it('should decorate method without side effects all', () => {
@@ -200,6 +208,7 @@ describe('Meta', () => {
         expect(spy4).toHaveBeenCalled()
         expect(spy5).toHaveBeenCalled()
         expect(spy6).toHaveBeenCalled()
+        expect(testInstance).toBeInstanceOf(TestClass)
       })
 
       it('should not mutate parameters after decoration', () => {
@@ -221,6 +230,7 @@ describe('Meta', () => {
         const testInstance = new TestClass()
         const testReturn = testInstance.testMeth(params)
         expect(testReturn).toEqual(returned)
+        expect(testInstance).toBeInstanceOf(TestClass)
       })
 
     })
@@ -279,6 +289,7 @@ describe('Meta', () => {
         const testInstance = new TestClass(1)
         expect(testInstance).toBeTruthy()
         expect(spy1).toHaveBeenCalled()
+        expect(testInstance).toBeInstanceOf(TestClass)
       })
     })
   })
@@ -300,6 +311,7 @@ describe('Meta', () => {
         class TestClass {}
         const testInstance = new TestClass()
         expect(testInstance).toEqual(decoratorInstance)
+        expect(testInstance).toBeInstanceOf(TestClass)
         done()
       })
 
@@ -332,6 +344,7 @@ describe('Meta', () => {
         class TestClass {}
         const testInstance = new TestClass()
         expect(testInstance).toEqual(decoratorInstance)
+        expect(testInstance).toBeInstanceOf(TestClass)
         done()
       })
 

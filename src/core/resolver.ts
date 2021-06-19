@@ -9,8 +9,8 @@ export class Resolver implements IResolver {
     this.context = [ ...params, ...this.context ]
   }
 
-  public resolveDecorationTime(target: ICtor, args: IArgumentsWrapper) {
-    this.resolve(target, this.getContextByCallMoment('decorate'), args)
+  public resolveDecorationTime(target: ICtor) {
+    this.resolve(target, this.getContextByCallMoment('decorate'))
   }
 
   public resolveBeforeCreateInstance(target: ICtor, args: IArgumentsWrapper) {
@@ -33,7 +33,7 @@ export class Resolver implements IResolver {
     return this.context.filter(ctx => ctx.moment === runtime && !ctx.resolve)
   }
 
-  private resolve(target: object, resolveTarget: IResolverContext[], args: IArgumentsWrapper) {
+  private resolve(target: object, resolveTarget: IResolverContext[], args?: IArgumentsWrapper) {
     resolveTarget.forEach(ctx => {
       try {
         ctx.handler(target, ...[ ...ctx.props, args ])

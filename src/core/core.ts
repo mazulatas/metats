@@ -1,6 +1,5 @@
 import {
-  ContextType,
-  FAKE_CTOR,
+  ContextType, FAKE_CTOR,
   HandlerCallMoment,
   IBaseHandler,
   IConstructorDecorationFunction,
@@ -14,8 +13,7 @@ import {
   IParamDecoratorFunction,
   IParameterHandler,
   IResolver,
-  MetaFactory,
-  ORIGINAL_CTOR,
+  MetaFactory, ORIGINAL_CTOR,
   stub
 } from '../models'
 import { IParamsDecoratorMaker } from '../models/core/params-decorator-maker'
@@ -101,6 +99,7 @@ function fieldDescriptor(descriptor: Partial<PropertyDescriptor> = {}) {
 }
 
 function getFakeCtx(target: ICtor | IFakeCtor, resolver: IResolver): IFakeCtor {
+  resolver.resolveDecorationTime(target)
   if (checkFakeCtor(target)) return target as IFakeCtor
   const argsWrap = new ArgumentsWrapper()
   function fakeCtor(...args: any[]): object {
@@ -116,6 +115,5 @@ function getFakeCtx(target: ICtor | IFakeCtor, resolver: IResolver): IFakeCtor {
   Reflect.set(fakeCtor, ORIGINAL_CTOR, target)
   Reflect.set(target, FAKE_CTOR, fakeCtor)
   fakeCtor.prototype = target.prototype
-  resolver.resolveDecorationTime(target, argsWrap)
   return fakeCtor as IFakeCtor
 }
