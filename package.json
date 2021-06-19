@@ -1,6 +1,6 @@
 {
   "name": "@mazulatas/meta.js",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -17,7 +17,7 @@
     "semantic-release-prepare": "ts-node tools/semantic-release-prepare",
     "precommit": "lint-staged",
     "travis-deploy-once": "travis-deploy-once",
-    "deployToNpm": "npm run test && npm run build && npm publish ./"
+    "deployToNpm": "npm run test && npm run build && npm publish ./dist"
   },
   "dependencies": {
   },
