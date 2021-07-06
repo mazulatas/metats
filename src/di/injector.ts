@@ -82,8 +82,7 @@ export class StaticInjector extends Injector {
     const innerToken = getOriginalCtor(token)
     for (const entry of this.records) {
       const record = entry[1]
-      const tokenPrototype = Reflect.get(record.token, 'prototype')
-      if (record.token === innerToken || tokenPrototype === innerToken || tokenPrototype instanceof innerToken) {
+      if (record.token === innerToken) {
         if (record.instance) return record.instance as T
         const deps = []
         for (let j = 0; j < record.deps.length; j++) {
