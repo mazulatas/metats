@@ -1,6 +1,6 @@
 {
-  "name": "@mazulatas/metats",
-  "version": "1.0.2",
+  "name": "@mazulatas/meta.js",
+  "version": "1.1.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -19,20 +19,21 @@
     "travis-deploy-once": "travis-deploy-once",
     "deployToNpm": "npm run test && npm run build && npm publish ./dist"
   },
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "@angular-devkit/build-angular": "12.0.5",
     "@angular/cli": "12.0.5",
+    "@angular/compiler": "12.0.5",
     "@angular/compiler-cli": "12.0.5",
-    "@types/node": "^12.11.1",
+    "@types/node": "12.11.1",
     "@types/jest": "25.2.3",
     "jest": "26.6.3",
     "jest-config": "26.6.3",
-    "ng-packagr": "^12.0.0",
+    "ng-packagr": "12.0.5",
     "ts-jest": "26.5.6",
     "tslint-config-prettier": "1.15.0",
     "tslint-config-standard": "8.0.1",
+    "tslib": "2.3.0",
     "tslint": "6.1.2",
     "typescript": "4.2.4"
   },
@@ -65,7 +66,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mazulatas/metats.git"
+    "url": "git+https://github.com/mazulatas/meta.js.git"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/mazulatas"
