@@ -56,30 +56,32 @@ export abstract class Injector {
   protected constructor() {}
   public abstract get<T>(token: Token<T>, notFoundValue?: T): T
   public abstract set(providers: Provider<any>[]): void
-  public abstract getRecord(token: Token<any>): IRecord | undefined
 
 }
 
 export class StaticInjector extends Injector {
 
   public parent: Injector | null = null
-  private readonly records: IRecord[] = []
+  private readonly records: Map<Token<any>, IRecord> = new Map()
 
   constructor(providers?: Provider<any>[], public readonly source?: string) {
     super()
-    this.records.push({ token: Injector as any, fn: () => this, deps: [], isAny: false })
+    this.records.set(Injector, { token: Injector as any, fn: () => this, deps: [], isAny: false })
     if (providers) this.set(providers)
   }
 
   public set(providers: Provider<any>[]) {
     const records = createRecords(providers)
-    this.records.push(...records)
+    for (let i = 0; i < records.length; i++) {
+      const record = records[i]
+      this.records.set(record.token, record)
+    }
   }
 
   public get<T>(token: Token<T>, notFoundValue?: T): T {
     const innerToken = getOriginalCtor(token)
-    for (let i = 0; i < this.records.length; i++) {
-      const record = this.records[i]
+    for (const entry of this.records) {
+      const record = entry[1]
       if (record.token === innerToken) {
         if (record.instance) return record.instance as T
         const deps = []
@@ -100,14 +102,6 @@ export class StaticInjector extends Injector {
     if (this.parent) return this.parent.get(innerToken, notFoundValue)
     if (notFoundValue) return notFoundValue
     throw injectError(`token ${token.name} not exist`)
-  }
-
-  public getRecord(token: Token<any>): IRecord | undefined {
-    for (let i = 0; i < this.records.length; i++) {
-      const record = this.records[i]
-      if (record.token === token) return record
-    }
-    return this.parent?.getRecord(token)
   }
 
 }
