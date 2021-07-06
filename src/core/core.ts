@@ -62,6 +62,26 @@ export function makeParamDecorator<P>(
   )
 }
 
+export function combineDecorators<P, F = IConstructorDecorationFunction>(decorators: MetaFactory<P, F>[]): MetaFactory<P, F>
+export function combineDecorators<P, F = IMethodDecoratorFunction>(decorators: MetaFactory<P, F>[]): MetaFactory<P, F>
+export function combineDecorators<P, F = IFieldDecoratorFunction>(decorators: MetaFactory<P, F>[]): MetaFactory<P, F>
+export function combineDecorators<P, F = IParamDecoratorFunction>(decorators: MetaFactory<P, F>[]): MetaFactory<P, F>
+export function combineDecorators(decorators: MetaFactory<any, any>[]): MetaFactory<any, any> {
+  if (!decorators.every(decorator => decorator.type !== decorators[0].type))
+    throw new Error('combine decorators error: decorators of different types cannot be combined')
+  const params = []
+  const type = decorators[0].type
+  for (let i = 0; i < decorators.length; i++) {
+    const decorator = decorators[i]
+    params.push(...decorator.params)
+  }
+  if (type === 'ctor') return makeConstructorDecorator(params)
+  if (type === 'method') return makeMethodDecorator(params)
+  if (type === 'field') return makeFieldDecorator(params)
+  if (type === 'param') return makeParamDecorator(params)
+  throw new Error(`combine decorators error: unknown type ${type}`)
+}
+
 function propsAggregator<P, H extends IBaseHandler, R>(
   params: IParamsDecoratorMaker<H, P>[],
   type: ContextType,
@@ -90,6 +110,7 @@ function propsAggregator<P, H extends IBaseHandler, R>(
     }
   } as MetaFactory<P, R>
   Reflect.set(handler, 'params', params)
+  Reflect.set(handler, 'type', type)
   return handler
 }
 

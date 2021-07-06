@@ -1,4 +1,12 @@
-import { FAKE_CTOR, IBaseHandler, ICtor, IFakeCtor, IResolver, ORIGINAL_CTOR, RESOLVER } from '../models'
+import {
+  FAKE_CTOR,
+  IBaseHandler,
+  ICtor,
+  IFakeCtor,
+  IResolver,
+  ORIGINAL_CTOR,
+  RESOLVER
+} from '../models'
 import { Resolver } from './resolver'
 
 const depthGlobal = 3
