@@ -67,7 +67,7 @@ export function combineDecorators<P, F = IMethodDecoratorFunction>(decorators: M
 export function combineDecorators<P, F = IFieldDecoratorFunction>(decorators: MetaFactory<P, F>[]): MetaFactory<P, F>
 export function combineDecorators<P, F = IParamDecoratorFunction>(decorators: MetaFactory<P, F>[]): MetaFactory<P, F>
 export function combineDecorators(decorators: MetaFactory<any, any>[]): MetaFactory<any, any> {
-  if (!decorators.every(decorator => decorator.type !== decorators[0].type))
+  if (!decorators.every(decorator => decorator.type === decorators[0].type))
     throw new Error('combine decorators error: decorators of different types cannot be combined')
   const params = []
   const type = decorators[0].type

@@ -1,6 +1,13 @@
-import { Bean, getOriginalCtor, IType, makeConstructorDecorator, makeFieldDecorator, makeMethodDecorator,
-  makeParamDecorator,
-  MetaFactoryNoProps } from '../src'
+import {
+  Bean, combineDecorators,
+  getOriginalCtor,
+  IMetaFactoryNoProps,
+  IType,
+  makeConstructorDecorator,
+  makeFieldDecorator,
+  makeMethodDecorator,
+  makeParamDecorator
+} from '../src'
 
 describe('Meta', () => {
 
@@ -22,12 +29,12 @@ describe('Meta', () => {
     })
 
     describe('decorate constructor', () => {
-      let testDecoratorAfterCallCtor1: MetaFactoryNoProps
-      let testDecoratorAfterCallCtor2: MetaFactoryNoProps
-      let testDecoratorBeforeCallCtor1: MetaFactoryNoProps
-      let testDecoratorBeforeCallCtor2: MetaFactoryNoProps
-      let testDecoratorDecorateCallCtor1: MetaFactoryNoProps
-      let testDecoratorDecorateCallCtor2: MetaFactoryNoProps
+      let testDecoratorAfterCallCtor1: IMetaFactoryNoProps
+      let testDecoratorAfterCallCtor2: IMetaFactoryNoProps
+      let testDecoratorBeforeCallCtor1: IMetaFactoryNoProps
+      let testDecoratorBeforeCallCtor2: IMetaFactoryNoProps
+      let testDecoratorDecorateCallCtor1: IMetaFactoryNoProps
+      let testDecoratorDecorateCallCtor2: IMetaFactoryNoProps
 
       beforeEach(() => {
         testDecoratorAfterCallCtor1 = makeConstructorDecorator({handler: spy1, moment: 'afterCreateInstance'})
@@ -137,12 +144,12 @@ describe('Meta', () => {
     })
 
     describe('decorate methods', () => {
-      let methodDecoratorDecorateCtor1: MetaFactoryNoProps
-      let methodDecoratorDecorateCtor2: MetaFactoryNoProps
-      let methodDecoratorAfterCallCtor1: MetaFactoryNoProps
-      let methodDecoratorAfterCallCtor2: MetaFactoryNoProps
-      let methodDecoratorBeforeCallCtor1: MetaFactoryNoProps
-      let methodDecoratorBeforeCallCtor2: MetaFactoryNoProps
+      let methodDecoratorDecorateCtor1: IMetaFactoryNoProps
+      let methodDecoratorDecorateCtor2: IMetaFactoryNoProps
+      let methodDecoratorAfterCallCtor1: IMetaFactoryNoProps
+      let methodDecoratorAfterCallCtor2: IMetaFactoryNoProps
+      let methodDecoratorBeforeCallCtor1: IMetaFactoryNoProps
+      let methodDecoratorBeforeCallCtor2: IMetaFactoryNoProps
 
       beforeEach(() => {
         methodDecoratorAfterCallCtor1 = makeMethodDecorator({handler: spy1, moment: 'afterCreateInstance'})
@@ -236,12 +243,12 @@ describe('Meta', () => {
     })
 
     describe('decorate field', () => {
-      let fieldDecoratorDecorateCtor1: MetaFactoryNoProps
-      let fieldDecoratorDecorateCtor2: MetaFactoryNoProps
-      let fieldDecoratorAfterCallCtor1: MetaFactoryNoProps
-      let fieldDecoratorAfterCallCtor2: MetaFactoryNoProps
-      let fieldDecoratorBeforeCallCtor1: MetaFactoryNoProps
-      let fieldDecoratorBeforeCallCtor2: MetaFactoryNoProps
+      let fieldDecoratorDecorateCtor1: IMetaFactoryNoProps
+      let fieldDecoratorDecorateCtor2: IMetaFactoryNoProps
+      let fieldDecoratorAfterCallCtor1: IMetaFactoryNoProps
+      let fieldDecoratorAfterCallCtor2: IMetaFactoryNoProps
+      let fieldDecoratorBeforeCallCtor1: IMetaFactoryNoProps
+      let fieldDecoratorBeforeCallCtor2: IMetaFactoryNoProps
 
       beforeEach(() => {
         fieldDecoratorAfterCallCtor1 = makeFieldDecorator({handler: spy1, moment: 'afterCreateInstance'})
@@ -265,12 +272,12 @@ describe('Meta', () => {
     })
 
     describe('decorate param', () => {
-      let paramDecoratorDecorateCtor1: MetaFactoryNoProps
-      let paramDecoratorDecorateCtor2: MetaFactoryNoProps
-      let paramDecoratorAfterCallCtor1: MetaFactoryNoProps
-      let paramDecoratorAfterCallCtor2: MetaFactoryNoProps
-      let paramDecoratorBeforeCallCtor1: MetaFactoryNoProps
-      let paramDecoratorBeforeCallCtor2: MetaFactoryNoProps
+      let paramDecoratorDecorateCtor1: IMetaFactoryNoProps
+      let paramDecoratorDecorateCtor2: IMetaFactoryNoProps
+      let paramDecoratorAfterCallCtor1: IMetaFactoryNoProps
+      let paramDecoratorAfterCallCtor2: IMetaFactoryNoProps
+      let paramDecoratorBeforeCallCtor1: IMetaFactoryNoProps
+      let paramDecoratorBeforeCallCtor2: IMetaFactoryNoProps
 
       beforeEach(() => {
         paramDecoratorAfterCallCtor1 = makeParamDecorator({handler: spy1, moment: 'afterCreateInstance'})
@@ -364,5 +371,51 @@ describe('Meta', () => {
       })
     })
 
+  })
+
+  describe('check out combine decorators', () => {
+    let spy1: jasmine.Spy
+    let spy2: jasmine.Spy
+    let spy3: jasmine.Spy
+
+    let testDecoratorDecorateCallCtor1: IMetaFactoryNoProps
+    let testDecoratorDecorateCallCtor2: IMetaFactoryNoProps
+    let testMethodDecorateCallCtor1: IMetaFactoryNoProps
+
+    beforeEach(() => {
+      spy1 = jasmine.createSpy()
+      spy2 = jasmine.createSpy()
+      spy3 = jasmine.createSpy()
+
+      testDecoratorDecorateCallCtor1 = makeConstructorDecorator({handler: spy1, moment: 'decorate'})
+      testDecoratorDecorateCallCtor2 = makeConstructorDecorator({handler: spy2, moment: 'decorate'})
+      testMethodDecorateCallCtor1 = makeMethodDecorator({handler: spy3, moment: 'decorate'})
+    })
+
+    it('should combine decorators', () => {
+      const testDecorator = combineDecorators([
+        testDecoratorDecorateCallCtor1,
+        testDecoratorDecorateCallCtor2
+      ])
+
+      @testDecorator()
+      class TestClass {
+
+      }
+
+      expect(spy1).toHaveBeenCalled()
+      expect(spy2).toHaveBeenCalled()
+    })
+
+    it('should not combine decorators', (done) => {
+      try {
+        combineDecorators([
+          testDecoratorDecorateCallCtor1,
+          testMethodDecorateCallCtor1
+        ])
+      } catch (e) {
+        done()
+      }
+    })
   })
 })
