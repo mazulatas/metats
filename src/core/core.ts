@@ -67,7 +67,7 @@ function propsAggregator<P, H extends IBaseHandler, R>(
   type: ContextType,
   postCall: Function = stub
 ): MetaFactory<P, R> {
-  return function(props?: P): any {
+  const handler = function(props?: P): any {
     return function(target: ICtor | IFakeCtor, ...args: any[]) {
       const resolver = getResolver(target)
       const context: IResolverContext[] = []
@@ -89,6 +89,8 @@ function propsAggregator<P, H extends IBaseHandler, R>(
       return postCall(target, resolver, ...args)
     }
   } as MetaFactory<P, R>
+  Reflect.set(handler, 'params', params)
+  return handler
 }
 
 function fieldDescriptor(descriptor: Partial<PropertyDescriptor> = {}) {

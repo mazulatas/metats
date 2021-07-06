@@ -1,5 +1,15 @@
-export type MetaFactoryProps<P, R = any> = (props: P) => R
+import { IParamsDecoratorMaker } from './params-decorator-maker'
 
-export type MetaFactoryNoProps<R = any> = () => R
+export interface IMetaFactory<P> {
+  params: IParamsDecoratorMaker<any, P>[]
+}
 
-export type MetaFactory<P, R> = unknown extends P ? MetaFactoryNoProps<R> : MetaFactoryProps<P, R>
+export interface IMetaFactoryProps<P, R = any> extends IMetaFactory<P> {
+  (props: P): R
+}
+
+export interface IMetaFactoryNoProps<R = any> extends IMetaFactory<unknown> {
+  (): R
+}
+
+export type MetaFactory<P, R> = unknown extends P ? IMetaFactoryNoProps<R> : IMetaFactoryProps<P, R>
