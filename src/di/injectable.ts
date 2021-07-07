@@ -24,8 +24,7 @@ function handler(ctx: any, props: IInjectableOptions | void) {
     providers.push(provider)
     const injectorStorage = getInjectorStorage(rawProvider)
     const providerInjector = Injector.getInjector(injectorStorage)
-    if (!providerInjector) continue
-    Injector.bindParentInjector(rawProviders, injector)
+    if (providerInjector) Injector.bindParentInjector(injectorStorage, injector)
   }
   injector.set(providers)
 }
