@@ -1,3 +1,3 @@
-export interface IInjectionToken {
+export interface IInjectionToken<T> {
   name: string
 }

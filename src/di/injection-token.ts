@@ -1,8 +1,8 @@
 import { IInjectionToken } from '../models'
 
-export class InjectionToken implements IInjectionToken {
+export class InjectionToken<T> implements IInjectionToken<T> {
 
-  public static create(name: string): IInjectionToken {
+  public static create<T>(name: string): IInjectionToken<T> {
     return new InjectionToken(name)
   }
 

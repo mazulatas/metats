@@ -8,7 +8,7 @@ export type FactoryProvider<T> = BaseProvider<{ useFactory: (...args: any[]) => 
 export type ClassProvider<T> = BaseProvider<{ useClass: IType<T> }, T>
 export type BaseProvider<O, T> = O & IFToken<T> & IFDeps & IFIsAny
 
-export type Token<T> = IInjectionToken | TypeToken<T>
+export type Token<T> = IInjectionToken<T> | TypeToken<T>
 export type TypeToken<T> = IType<T>
 
 export type ProvideInStrategy = null | 'root' | 'any'
