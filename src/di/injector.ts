@@ -1,4 +1,4 @@
-import { getOriginalCtor } from '../core'
+import { getDeepField, getOriginalCtor, hasDeepField } from '../core'
 import { INJECTOR, Provider, Token } from '../models'
 import { IRecord } from '../models/di/record'
 import { createRecords, injectError } from './utils'
@@ -21,7 +21,7 @@ export abstract class Injector {
 
   public static getInjector(ctx: any): Injector | undefined {
     const originalCtor = getOriginalCtor(ctx)
-    return Reflect.get(originalCtor, INJECTOR)
+    return hasDeepField(originalCtor, INJECTOR) ? getDeepField(originalCtor, INJECTOR) : undefined
   }
 
   public static setInjector(ctx: any, injector: Injector): void {

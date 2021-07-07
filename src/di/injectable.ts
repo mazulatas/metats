@@ -22,8 +22,9 @@ function handler(ctx: any, props: IInjectableOptions | void) {
       getDeepField(rawProvider, SELF_PROVIDER) :
       rawProvider
     providers.push(provider)
-    const providerInjector = Injector.getInjector(rawProvider)
-    if (!providerInjector) break
+    const injectorStorage = getInjectorStorage(rawProvider)
+    const providerInjector = Injector.getInjector(injectorStorage)
+    if (!providerInjector) continue
     Injector.bindParentInjector(rawProviders, injector)
   }
   injector.set(providers)
@@ -34,4 +35,10 @@ function buildProvider(ctx: any, params: IInjectableOptions | void | null): Prov
   const isAny = innerParams.provideIn === 'any'
   const provideAs = innerParams.provideAs || ctx
   return { isAny, token: provideAs, useClass: ctx }
+}
+
+function getInjectorStorage(provider: Provider<any>): any {
+  if ('useClass' in provider) return provider.useClass
+  if ('useValue' in provider) return Reflect.get(provider.useValue, 'prototype')
+  return provider
 }
