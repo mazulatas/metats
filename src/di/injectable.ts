@@ -1,6 +1,5 @@
-import { getOriginalCtor, makeConstructorDecorator } from '../core'
-import { Provider } from '../models'
-import { IInjectableOptions } from '../models/di/injectable-options'
+import { getDeepField, getOriginalCtor, hasDeepField, makeConstructorDecorator } from '../core'
+import { IInjectableOptions, Provider, SELF_PROVIDER } from '../models'
 import { Injector } from './injector'
 
 export const Injectable = makeConstructorDecorator<IInjectableOptions | void>(
@@ -9,19 +8,30 @@ export const Injectable = makeConstructorDecorator<IInjectableOptions | void>(
 
 function handler(ctx: any, props: IInjectableOptions | void) {
   const innerProps: IInjectableOptions = props || {}
-  const isAny = innerProps.provideIn === 'any'
   const inRoot = innerProps.provideIn === 'root'
-  const provideAs = innerProps.provideAs || ctx
-  const selfProvider: Provider<any> = { isAny, token: provideAs, useClass: ctx }
-  const providers: any[] = innerProps.providers?.map(p => getOriginalCtor(p)) || []
+  const selfProvider: Provider<any> = buildProvider(ctx, props)
+  Reflect.set(ctx, SELF_PROVIDER, selfProvider)
   const injector = inRoot ? Injector.root : Injector.getOrCreateInjector(ctx)
-  injector.set([ selfProvider, ...providers ])
   Injector.setInjector(ctx, injector)
-  for (let i = 0; i < providers.length; i++) {
-    const rawProvider = providers[i]
-    const provider = 'token' in rawProvider ? rawProvider.token : rawProvider
-    const providerInjector = Injector.getOrCreateInjector(provider, [ rawProvider ])
-    Injector.setInjector(provider, providerInjector)
-    Injector.bindParentInjector(provider, injector)
+  const rawProviders: any[] = innerProps.providers || []
+  const providers: Provider<any>[] = []
+  providers.push(selfProvider)
+  for (let i = 0; i < rawProviders.length; i++) {
+    const rawProvider = getOriginalCtor(rawProviders[i])
+    const provider: Provider<any> = hasDeepField(rawProvider, SELF_PROVIDER) ?
+      getDeepField(rawProvider, SELF_PROVIDER) :
+      rawProvider
+    providers.push(provider)
+    const providerInjector = Injector.getInjector(rawProvider)
+    if (!providerInjector) break
+    Injector.bindParentInjector(rawProviders, injector)
   }
+  injector.set(providers)
+}
+
+function buildProvider(ctx: any, params: IInjectableOptions | void | null): Provider<any> {
+  const innerParams: IInjectableOptions = params || {}
+  const isAny = innerParams.provideIn === 'any'
+  const provideAs = innerParams.provideAs || ctx
+  return { isAny, token: provideAs, useClass: ctx }
 }

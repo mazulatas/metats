@@ -1,25 +1,52 @@
-import { Injectable } from '../../src'
+import { Injectable, InjectionToken, Injector } from '../../src'
 
 describe('Injectable', () => {
 
-  it('', () => {
-    @Injectable()
-    class TestClass {
+  it('should replace injectable implementation use token', () => {
+    const token = InjectionToken.create('test')
 
+    @Injectable({ provideAs: token })
+    class TestClass {
     }
+
+    const injector = Injector.getInjector(TestClass)
+    const instance = injector?.get(token)
+    expect(instance).toBeInstanceOf(TestClass)
   })
 
-  // it('should replace injectable implementation use token', () => {
-  //   const token = InjectionToken.create('test')
-  //
-  //   @Injectable({ provideAs: token })
-  //   class TestClass3 {
-  //   }
-  //
-  //   const instance = Injector.get(token)
-  //   expect(instance).toBeInstanceOf(TestClass3)
-  // })
-  //
+  it('should replace injectable implementation use abstract class', () => {
+    abstract class AbsClass {
+
+    }
+
+    @Injectable({ provideAs: AbsClass })
+    class TestClass {
+    }
+
+    const injector = Injector.getInjector(TestClass)
+    const instance = injector?.get(AbsClass)
+    expect(instance).toBeInstanceOf(TestClass)
+  })
+
+  it('should inject the class through the parent with a provider override', () => {
+    abstract class AbsClass {
+
+    }
+
+    @Injectable({ provideAs: AbsClass })
+    class TestClass {
+    }
+
+    @Injectable({ providers: [ TestClass ] })
+    class App {
+
+    }
+
+    const injector = Injector.getInjector(App)
+    const instance = injector?.get(AbsClass)
+    expect(instance).toBeInstanceOf(TestClass)
+  })
+
   // it('should replace injectable implementation', () => {
   //   class TestClass1 {
   //   }
