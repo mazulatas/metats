@@ -1,13 +1,13 @@
 {
   "name": "@mazulatas/meta.js",
-  "version": "1.1.11-esbuild",
+  "version": "1.1.17-esbuild5",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "rm -rf lib && mkdir -p lib/browser lib/node lib/types && npm run build:node && npm run build:browser && npm run build:types",
+    "build": "node build.js",
     "build:browser": "esbuild src/index.ts --bundle --minify --sourcemap --format=esm --outfile=./lib/browser/index.js",
     "build:node": "esbuild src/index.ts --bundle --sourcemap --format=esm --platform=node --target=node14.17.0 --outfile=./lib/node/index.js",
-    "build:types": "tsc --emitDeclarationOnly --declarationDir lib/types",
+    "build:types": "tsc --project tsconfig.json",
     "watch": "ng build --watch --configuration development",
     "lint": "tslint  --project tsconfig.json -t codeFrame 'src/**/*.ts' 'test/**/*.ts'",
     "prebuild": "rimraf dist",
@@ -22,10 +22,13 @@
     "travis-deploy-once": "travis-deploy-once",
     "deployToNpm": "npm run test && npm run build && npm publish ./dist"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@mazulatas/meta.js": "1.1.17-esbuild5"
+  },
   "devDependencies": {
     "@types/jest": "25.2.3",
     "@types/node": "12.11.1",
+    "core-js": "3.15.2",
     "esbuild": "0.12.15",
     "jest": "26.6.3",
     "jest-config": "26.6.3",
@@ -70,7 +73,9 @@
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/mazulatas"
   },
-  "exports": {
-    ".": "./dist"
-  }
+  "typings": "index.d.ts",
+  "main": "index.js",
+  "esm": "lib/index.esm.js",
+  "cjs": "lib/index.cjs.js",
+  "iife": "lib/index.iife.js"
 }

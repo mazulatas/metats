@@ -1,4 +1,4 @@
-import { IArgumentsWrapper, ICtor, IResolver } from '../models'
+import { ContextType, IArgumentsWrapper, ICtor, IResolver } from '../models'
 import { IResolverContext } from '../models/core/resolver-context'
 
 export class Resolver implements IResolver {
@@ -27,6 +27,10 @@ export class Resolver implements IResolver {
 
   public isResolve(name: string): boolean {
     return this.context.find(ctx => ctx.name === name)?.resolve || false
+  }
+
+  public getContextByType(type: ContextType): IResolverContext[] {
+    return this.context.filter(ctx => ctx.type === type)
   }
 
   private getContextByCallMoment(runtime: 'decorate' | 'beforeCreateInstance' | 'afterCreateInstance'): IResolverContext[] {

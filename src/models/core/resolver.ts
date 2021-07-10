@@ -1,4 +1,5 @@
 import { IArgumentsWrapper } from './arguments-wrapper'
+import { ContextType } from './context-type'
 import { IResolverContext } from './resolver-context'
 
 export interface IResolver {
@@ -8,4 +9,5 @@ export interface IResolver {
   resolveDecorationTime(target: object): void
   resolveBeforeCreateInstance(target: object, args: IArgumentsWrapper): void
   resolveAfterCreateInstance(target: object, args: IArgumentsWrapper): void
+  getContextByType(type: ContextType): IResolverContext[]
 }
